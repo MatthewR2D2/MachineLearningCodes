@@ -10,3 +10,7 @@ PythonCode/PytorchExamples/AI/data/cifar-10-batches-py/test_batch
 PythonCode/PytorchExamples/AI/data/cifar-10-python.tar.gz
 PythonCode/PytorchExamples/AI/data/faces.zip
 *.jpg
+.idea/misc.xml
+.idea/MachineLearningCodes.iml
+.idea/modules.xml
+.idea/workspace.xml
