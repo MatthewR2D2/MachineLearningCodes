@@ -14,3 +14,7 @@ PythonCode/PytorchExamples/AI/data/faces.zip
 .idea/MachineLearningCodes.iml
 .idea/modules.xml
 .idea/workspace.xml
+
+\.idea/encodings\.xml
+
+\.idea/
