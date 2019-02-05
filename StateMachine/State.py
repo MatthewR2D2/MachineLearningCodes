@@ -1,7 +1,7 @@
 from fysom import *
 
 fsm = Fysom({'initial': 'awake',
-             'final': 'red',
+             'final': 'end',
              'events': [
                  {'name': 'wakeup', 'src': 'sleeping', 'dst': 'awake'},
-                 {'name': 'sleep', 'src': 'awake', 'dst': 'sleeping'}]})
+                 {'na.me': 'sleep', 'src': 'awake', 'dst': 'sleeping'}]})
