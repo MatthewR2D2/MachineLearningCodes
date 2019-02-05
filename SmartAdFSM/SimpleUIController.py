@@ -3,20 +3,50 @@ from tkinter.ttk import *
 from tkinter import scrolledtext
 from tkinter import messagebox
 
-#AI devices
+#AI devices imports
+from SmartAdFSM import AIControlSystem as aic
+from SmartAdFSM import FiniteStateMachine as fsm
+
+
+
 
 #Varialbes that are collected from differnt APIs
 # TODO:Replace with real ads from Google/Yahoo/Facebook
-dropdownAdValues = ('YahooAd', "GoogleAd", "FackbookAd")
+# TODO: Create method to gather all avalialbe ads from service providers and create
+#  1: list of all ads,
+#  2: FSM for all ads
+
+
+yahooAd = fsm.createFSM()
+googleAd = fsm.createFSM()
+
+aic.printStateOfEachMachine("Yahoo", yahooAd)
+aic.printStateOfEachMachine("Google", googleAd)
+
+dropdownAdValues = ('Yahoo', "Google", "FaceBook")
 activeAds = ("New Prodcut \nSale \nBuy One Get One Free \nBuy two get two for two")
+
+
+
+'''
+Button methods that will handle the UI input for button clicks
+'''
 
 def activateClicked():
     target = combo.get()
     msg = "{} Ad is now active".format(target)
+    if target == "Yahoo":
+        aic.controlFSM(yahooAd, "activate")
+    elif target == "Google":
+        aic.controlFSM(googleAd, "activate")
     messagebox.showinfo('Action', msg)
 
 def deactivateClicked():
     target = combo.get()
+    if target == "Yahoo":
+        aic.controlFSM(yahooAd, "deactivate")
+    elif target == "Google":
+        aic.controlFSM(googleAd, "deactivate")
     msg= "{} Ad in now inactive".format(target)
     messagebox.showinfo('Action', msg)
 
