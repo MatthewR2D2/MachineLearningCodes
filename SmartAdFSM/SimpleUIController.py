@@ -5,7 +5,6 @@ from tkinter import messagebox
 
 # AI devices imports
 from SmartAdFSM import AIControlSystem as aic
-from SmartAdFSM import YahooFiniteStateMachine as fsm
 from SmartAdFSM.AdUtility import YahooJsonParser as yjp
 
 # Varialbes that are collected from differnt APIs
@@ -29,7 +28,7 @@ parsedFile = yjp.readinJson(jsonFile)
 yjp.createAdObjects(apiYahooAds, parsedFile)
 
 for ad in apiYahooAds:
-    myAds.append(((ad), fsm.createFSM()))
+    myAds.append((ad))
 
 # print("Test add")
 # for ad in myAds:
@@ -38,19 +37,12 @@ for ad in apiYahooAds:
 #     print(ad[1].current)
 
 
-# Simple loop through the ads to see what is there
-for ads in myAds:
-    id = ads[0].id
-    title = ads[0].title
-    name = "ID:{} Title:{}".format(id, title)
-    machine = ads[1]
-    aic.printStateOfEachMachine(name, machine)
 
 # Add ad values into the list for dropdown and fsm
 dropdownAdValues = []  # names of each ad
 activeAds = []  # The FSM for each ad
 for ad in myAds:
-    title = ad[0].title
+    title = ad.title
     dropdownAdValues.append(title)
     activeAds.append(title + "\n")
 
@@ -63,8 +55,8 @@ def activateClicked():
     target = combo.get()
     msg = "{} Ad is now active".format(target)
     for targetAd in myAds:
-        if target == targetAd[0].title:
-            aic.controlFSM(targetAd[1], "activate")
+        if target == targetAd.title:
+            aic.controlFSM(targetAd, "activate")
             messagebox.showinfo('Action', msg)
             break
 
@@ -73,8 +65,8 @@ def deactivateClicked():
     target = combo.get()
     msg = "{} Ad in now inactive".format(target)
     for targetAd in myAds:
-        if target == targetAd[0].title:
-            aic.controlFSM(targetAd[1], "deactivate")
+        if target == targetAd.title:
+            aic.controlFSM(targetAd, "pause")
             messagebox.showinfo('Action', msg)
             break
 
@@ -83,11 +75,11 @@ def endClicked():
     target = combo.get()
     msg = "{} Ad in now ended".format(target)
     for targetAd in myAds:
-        if target == targetAd[0].title:
-            aic.controlFSM(targetAd[1], "end")
+        if target == targetAd.title:
+            aic.controlFSM(targetAd,  "delete")
             messagebox.showinfo('Action', msg)
             # Make sure to remove this from the list
-            myAds.remove(targetAd)
+            #myAds.remove(targetAd) # This will remove the ad from the list
             # update all feilds
             break
 
