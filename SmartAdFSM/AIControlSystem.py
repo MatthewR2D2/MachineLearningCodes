@@ -17,38 +17,49 @@ __status__ = "Dev"
 
 '''
 
-from SmartAdFSM import YahooFiniteStateMachine as fsm
+
+'''
+# These methods will interact with the API for Yahoo
+deleteAd Will delete the ad from the system and will not be reversible
+activateAd will set the status of the ad to Active system
+pauseAd will set the status of the ad to Pause in the system
+'''
+def deleteAd(ad):
+    print("Sending Cancel to API for {}".format(ad.id))
+
+
+def activateAd(ad):
+    print("Sending Activate Request to API for {}".format(ad.id))
+
+
+def pauseAd(ad):
+    print("Sending Pause Request to API for {}".format(ad.id))
 
 
 # This is a test controller that takes in a machine and a trigger then set the machine state correctly
-def controlFSM(machine, trigger):
-    if trigger == "start":
-        if machine.current == "START":
-            print('Ad is all ready running')
+def controlFSM(ad, trigger):
+
+    if trigger == "delete":
+        if ad.status == "DELETED":
+            print("Ad is all ready ended and will be removed soon")
         else:
-            print("You cannot start a ad that has already started")
-    elif trigger == "end":
-        if machine.current == "DELETED":
-            print("Ad is all ready ended")
-        else:
-            print("Ad is ending")
-            machine.end()
+            deleteAd(ad)
+
     elif trigger == "activate":
-        if machine.current == "ACTIVE":
-            print("Ad is all ready active")
+        if ad.status == "ACTIVE":
+            print("Ad is Currently Active")
         else:
-            machine.activate()
-            print("Ad Activated")
-    elif trigger == "deactivate":
-        if machine.current == "PAUSED":
-            print("Ad is already inactive")
+            activateAd(ad)
+
+    elif trigger == "pause":
+        if ad.status == "PAUSED":
+            print("Ad is Currently Paused")
         else:
-            machine.deactivate()
-            print("Ad is now inactive")
+            pauseAd(ad)
 
 
-def printStateOfEachMachine(name, machine):
-    print('FSM: {} is at state {}'.format(name, machine.current))
+
+
 
 
 '''
@@ -57,35 +68,19 @@ def printStateOfEachMachine(name, machine):
 if __name__ == '__main__':
     print("Creating Yahoo ad controler")
     # Create a FSM for yahoo ad and google ad
-    yahooMachine = fsm.createFSM()
-    googleMachine = fsm.createFSM()
-    facebookMachine = fsm.createFSM()
 
-    printStateOfEachMachine("Yahoo", yahooMachine)
-    printStateOfEachMachine("Google", googleMachine)
-    printStateOfEachMachine("Facebook", facebookMachine)
+
+
 
     activateTrigger = "activate"
     deactivateTrigger = "deactivate"
     endTrigger = "end"
     startTrigger = "Start"
 
+    testYahooAd = ""
+    testGoogleAd = ""
+    testFaceBookAd = ""
+
     print("Starting Simple Test")
-    controlFSM(yahooMachine, startTrigger)
-    controlFSM(yahooMachine, activateTrigger)
-    controlFSM(yahooMachine, activateTrigger)
-    controlFSM(yahooMachine, deactivateTrigger)
-    controlFSM(yahooMachine, deactivateTrigger)
-    controlFSM(yahooMachine, activateTrigger)
-    controlFSM(yahooMachine, startTrigger)
-    controlFSM(yahooMachine, activateTrigger)
-    print("Simple Test Finished Successfully")
 
-    controlFSM(googleMachine, endTrigger)
 
-    controlFSM(facebookMachine, deactivateTrigger)
-
-    # Create a FSM for yahoo ad
-    printStateOfEachMachine("Yahoo", yahooMachine)
-    printStateOfEachMachine("Google", googleMachine)
-    printStateOfEachMachine("Facebook", facebookMachine)
