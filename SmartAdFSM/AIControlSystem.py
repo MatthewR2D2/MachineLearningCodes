@@ -17,7 +17,7 @@ __status__ = "Dev"
 
 '''
 
-from SmartAdFSM import FiniteStateMachine as fsm
+from SmartAdFSM import YahooFiniteStateMachine as fsm
 
 
 # This is a test controller that takes in a machine and a trigger then set the machine state correctly
