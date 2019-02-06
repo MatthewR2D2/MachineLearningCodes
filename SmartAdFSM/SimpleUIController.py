@@ -5,27 +5,44 @@ from tkinter import messagebox
 
 # AI devices imports
 from SmartAdFSM import AIControlSystem as aic
-from SmartAdFSM import FiniteStateMachine as fsm
+from SmartAdFSM import YahooFiniteStateMachine as fsm
+from SmartAdFSM.AdUtility import YahooJsonParser as yjp
 
 # Varialbes that are collected from differnt APIs
 # TODO:Replace with real ads from Google/Yahoo/Facebook
 # TODO: Create method to gather all avalialbe ads from service providers and create
-#  1: list of all ads,
+#  1: list of all ads form API, '(Yahoo, Google, Facebook)
 #  2: FSM for all ads
 
-# This holds the list of all available ads
-myAds = []
 
-# Create fake ads for initial input
-yahooAd = fsm.createFSM()
-googleAd = fsm.createFSM()
+# List for ads
+# They are broken up first by service provider then added into a master list
+myAds = []        # This holds every add from every service provider.
+apiYahooAds = []  # This holds every yahoo add
 
-myAds.append(("Yahoo", yahooAd))
-myAds.append(("Google", googleAd))
+# Test Ad simulate call from API
+# TODO: Create call to API for Yahoo Ad to get every ad that is available
+jsonFile = "TestAds/YahooAd.json"
+# read in the file
+parsedFile = yjp.readinJson(jsonFile)
+# create objects for each ad and add them into the Yahoo Ad list
+yjp.createAdObjects(apiYahooAds, parsedFile)
+
+for ad in apiYahooAds:
+    myAds.append(((ad), fsm.createFSM()))
+
+# print("Test add")
+# for ad in myAds:
+#     print(ad)
+#     print(ad[0].id)
+#     print(ad[1].current)
+
 
 # Simple loop through the ads to see what is there
 for ads in myAds:
-    name = ads[0]
+    id = ads[0].id
+    title = ads[0].title
+    name = "ID:{} Title:{}".format(id, title)
     machine = ads[1]
     aic.printStateOfEachMachine(name, machine)
 
@@ -33,8 +50,9 @@ for ads in myAds:
 dropdownAdValues = []  # names of each ad
 activeAds = []  # The FSM for each ad
 for ad in myAds:
-    dropdownAdValues.append(ad[0])
-    activeAds.append(ad[1])
+    title = ad[0].title
+    dropdownAdValues.append(title)
+    activeAds.append(title + "\n")
 
 '''
 Button methods that will handle the UI input for button clicks
@@ -45,7 +63,7 @@ def activateClicked():
     target = combo.get()
     msg = "{} Ad is now active".format(target)
     for targetAd in myAds:
-        if target == targetAd[0]:
+        if target == targetAd[0].title:
             aic.controlFSM(targetAd[1], "activate")
             messagebox.showinfo('Action', msg)
             break
@@ -55,16 +73,17 @@ def deactivateClicked():
     target = combo.get()
     msg = "{} Ad in now inactive".format(target)
     for targetAd in myAds:
-        if target == targetAd[0]:
+        if target == targetAd[0].title:
             aic.controlFSM(targetAd[1], "deactivate")
             messagebox.showinfo('Action', msg)
             break
+
 
 def endClicked():
     target = combo.get()
     msg = "{} Ad in now ended".format(target)
     for targetAd in myAds:
-        if target == targetAd[0]:
+        if target == targetAd[0].title:
             aic.controlFSM(targetAd[1], "end")
             messagebox.showinfo('Action', msg)
             # Make sure to remove this from the list
@@ -91,7 +110,7 @@ deactivateButton = Button(window, text="Deactivate Ad",
 
 # End Button
 endButton = Button(window, text="End Ad",
-                          command=endClicked)
+                   command=endClicked)
 # Quit button
 quitButton = Button(window, text="Quit",
                     command=quit)
@@ -108,7 +127,8 @@ activeAdsLabel = Label(window, text="Current Ads Available")
 # Text filed for user
 textFeild = scrolledtext.ScrolledText(window, width=40, height=10)
 # set the textfeild' contents
-textFeild.insert(INSERT, activeAds)
+for actAds in activeAds:
+    textFeild.insert(INSERT, actAds)
 
 # Set main label position on grid
 mainLabel.grid(column=0, row=0)
