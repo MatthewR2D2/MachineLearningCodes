@@ -48,22 +48,24 @@ This can be applied to every state machine
 
 This method will help create each FSM for each Ad services
 States available
-# start
-# end
-# activate
-# deactivate
+# START
+# ACTIVE
+# PAUSED
+# ON_HOLD
+# REJECTED
+# DELETED
 
 This method also defines the events that controls the transition between based on outside environment
 '''
 
 
 def createFSM():
-    return Fysom({'initial': 'start', 'final': 'endAd',
+    return Fysom({'initial': 'START', 'final': 'DELETED',
                   'events':
                       [
-                          {'name': 'activate', 'src': ['start', 'inactiveAd'], 'dst': 'activeAd'},
-                          {'name': 'deactivate', 'src': ['activeAd', 'start'], 'dst': 'inactiveAd'},
-                          {'name': 'end', 'src': ['activeAd', 'start', 'inactiveAd'], 'dst': 'endAd'}]})
+                          {'name': 'activate', 'src': ['START', 'PAUSED', 'ON_HOLD'], 'dst': 'ACTIVE'},
+                          {'name': 'deactivate', 'src': ['START', 'ACTIVE',  'ON_HOLD'], 'dst': 'PAUSED'},
+                          {'name': 'end', 'src': ['START', 'ACTIVE', 'PAUSED', 'ON_HOLD', 'REJECTED'], 'dst': 'DELETED'}]})
 
 
 '''
@@ -77,36 +79,38 @@ see if there are any issues
 '''
 
 
-def testStateChange(state):
+def testStateChange(myFSM):
     print("Starting Testing")
     task = input("What should I do")
     if task == "s":
-        if state.current == "start":
+        if myFSM.current == "START":
             print("Ad is all ready stated, cannot start it again")
-            testStateChange(state)
+            testStateChange(myFSM)
         else:
-            print("Invalid Change")
+            print("You cannot restart a running ad")
+            testStateChange(myFSM)
     elif task == "a":
-        if state.current == "activeAd":
+        if myFSM.current == "ACTIVE":
             print("Ad is all ready active")
-            testStateChange(state)
+            testStateChange(myFSM)
         else:
-            state.activate()
-            printState(state.current)
-            testStateChange(state)
+            myFSM.activate()
+            printState(myFSM.current)
+            testStateChange(myFSM)
     elif task == "d":
-        if state.current == "inactiveAd":
+        if myFSM.current == "PAUSED":
             print("Ad is already inactive")
-            testStateChange(state)
+            testStateChange(myFSM)
         else:
-            state.deactivate()
-            printState(state.current)
-            testStateChange(state)
+            myFSM.deactivate()
+            printState(myFSM.current)
+            testStateChange(myFSM)
     elif task == "e":
-        state.end()
-        printState(state.current)
+        myFSM.end()
+        printState(myFSM.current)
     else:
-        pass
+        print("Unknow state change retry")
+        testStateChange(myFSM)
 
 
 '''
@@ -119,3 +123,14 @@ def printState(printStatement):
 
 def printCurrentState(machine):
     print("The current State is: ", machine.current)
+
+
+'''
+This is for testing the this python file 
+'''
+if __name__ == '__main__':
+    print("Testing Yahoo FSM Logic")
+
+    myMachine = createFSM()
+    printCurrentState(myMachine)
+    testStateChange(myMachine)
