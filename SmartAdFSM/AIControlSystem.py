@@ -27,7 +27,7 @@ def controlFSM(machine, trigger):
             print('Ad is all ready running')
         else:
             print("You cannot start a ad that has already started")
-    elif trigger == "End":
+    elif trigger == "end":
         if machine.current == "endAd":
             print("Ad is all ready ended")
         else:
