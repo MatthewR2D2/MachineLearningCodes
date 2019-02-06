@@ -22,25 +22,25 @@ from SmartAdFSM import YahooFiniteStateMachine as fsm
 
 # This is a test controller that takes in a machine and a trigger then set the machine state correctly
 def controlFSM(machine, trigger):
-    if trigger == "Start":
-        if machine.current == "start":
+    if trigger == "start":
+        if machine.current == "START":
             print('Ad is all ready running')
         else:
             print("You cannot start a ad that has already started")
     elif trigger == "end":
-        if machine.current == "endAd":
+        if machine.current == "DELETED":
             print("Ad is all ready ended")
         else:
             print("Ad is ending")
             machine.end()
     elif trigger == "activate":
-        if machine.current == "activeAd":
+        if machine.current == "ACTIVE":
             print("Ad is all ready active")
         else:
             machine.activate()
             print("Ad Activated")
     elif trigger == "deactivate":
-        if machine.current == "inactiveAd":
+        if machine.current == "PAUSED":
             print("Ad is already inactive")
         else:
             machine.deactivate()
@@ -67,7 +67,7 @@ if __name__ == '__main__':
 
     activateTrigger = "activate"
     deactivateTrigger = "deactivate"
-    endTrigger = "End"
+    endTrigger = "end"
     startTrigger = "Start"
 
     print("Starting Simple Test")
@@ -78,10 +78,10 @@ if __name__ == '__main__':
     controlFSM(yahooMachine, deactivateTrigger)
     controlFSM(yahooMachine, activateTrigger)
     controlFSM(yahooMachine, startTrigger)
-    controlFSM(yahooMachine, endTrigger)
+    controlFSM(yahooMachine, activateTrigger)
     print("Simple Test Finished Successfully")
 
-    controlFSM(googleMachine, activateTrigger)
+    controlFSM(googleMachine, endTrigger)
 
     controlFSM(facebookMachine, deactivateTrigger)
 
