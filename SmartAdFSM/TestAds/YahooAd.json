@@ -1,0 +1,44 @@
+[
+  {
+      "id": 320324,
+      "description": "this is the ad description",
+      "adGroupId": 46758,
+      "status": "ACTIVE",
+      "title": "batch call ad 1",
+      "advertiserId": 87292,
+      "landingUrl": "http://www.yahoo.com",
+      "imageUrl": "http://image1.jpg",
+      "sponsoredBy": "Sandboxes Inc",
+      "campaignId": 31369,
+      "displayUrl": "http://www.yahoo.com",
+      "imageUrlHQ": null,
+      "contentUrl": null,
+      "callToActionText": null,
+          "videoPrimaryUrl": null,
+          "adName": null,
+              "impressionTrackingUrls": {
+                 "impression": null
+              }
+  },
+  {
+      "id": 320325,
+      "description": "ad description",
+      "adGroupId": 46758,
+      "status": "ACTIVE",
+      "title": "batch call ad 2",
+      "advertiserId": 87292,
+      "landingUrl": "http://www.yahoo.com",
+      "imageUrl": "http://image2.jpg",
+      "sponsoredBy": "Sandboxes Inc",
+      "campaignId": 31369,
+      "displayUrl": "http://www.yahoo.com",
+      "imageUrlHQ": null,
+      "contentUrl": null,
+      "callToActionText": null,
+          "videoPrimaryUrl": null,
+          "adName": null,
+              "impressionTrackingUrls": {
+                 "impression": null
+              }
+  }
+]
