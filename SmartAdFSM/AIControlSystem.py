@@ -17,77 +17,65 @@ __status__ = "Dev"
 
 '''
 
+import requests
 
-'''
-# These methods will interact with the API for Yahoo
-deleteAd Will delete the ad from the system and will not be reversible
-activateAd will set the status of the ad to Active system
-pauseAd will set the status of the ad to Pause in the system
-'''
+yahooPostURL = "http://ptsv2.com/t/1bgt4-1549605359"
+
+body = {'ids': [12, 14, 50]}
+
 
 # Open a connection to YahooAPI
 # Create Json file to send
 # Send this to the endpoint
+
 def deleteAd(ad):
     print("Sending Cancel Request")
-    print("Ad-ID:{} is being deleted".format(ad.id))
+    r = requests.post(yahooPostURL, json=body)
+    print(r.status_code)
 
 
 def activateAd(ad):
     print("Sending Activate Request")
-    print("Ad-ID:{} is being Activated".format(ad.id))
+    r = requests.post(yahooPostURL, json=body)
+    print(r.status_code)
 
 
 def pauseAd(ad):
     print("Sending Pause Request")
-    print("Ad-ID:{} is being Paused".format(ad.id))
+    r = requests.post(yahooPostURL, json=body)
+    print(r.status_code)
 
 
 # This is a test controller that takes in a machine and a trigger then set the machine state correctly
 def controlFSM(ad, trigger):
+    resultString = ""
 
     if trigger == "delete":
         if ad.status == "DELETED":
-            print("Ad is all ready ended and will be removed soon")
+            resultString = "Ad:{}-ID:{} has already ended and will be removed soon".format(ad.title, ad.id)
         else:
             deleteAd(ad)
+            resultString = "Ad:{}-ID:{} is being deleted".format(ad.title, ad.id)
 
     elif trigger == "activate":
         if ad.status == "ACTIVE":
-            print("Ad is Currently Active")
+            resultString = "Ad:{}-ID:{} is already Active".format(ad.title, ad.id)
         else:
             activateAd(ad)
+            resultString = "Ad:{}-ID:{} is being activated".format(ad.title, ad.id)
 
     elif trigger == "pause":
         if ad.status == "PAUSED":
-            print("Ad is Currently Paused")
+            resultString = "Ad:{}-ID:{} is already paused".format(ad.title, ad.id)
         else:
             pauseAd(ad)
+            resultString = "Ad:{}-ID:{} is being paused".format(ad.title, ad.id)
 
-
-
-
+    return resultString
 
 
 '''
 # this is an example of how to use the FMS and AI controller together 
 '''
 if __name__ == '__main__':
-    print("Creating Yahoo ad controler")
-    # Create a FSM for yahoo ad and google ad
-
-
-
-
-    activateTrigger = "activate"
-    deactivateTrigger = "deactivate"
-    endTrigger = "end"
-    startTrigger = "Start"
-
-    testYahooAd = ""
-    testGoogleAd = ""
-    testFaceBookAd = ""
-
     print("Starting Simple Test")
-
-
