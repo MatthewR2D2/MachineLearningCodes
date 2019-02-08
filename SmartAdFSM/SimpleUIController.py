@@ -52,8 +52,7 @@ def eventListener(targetAd,event):
     for ad in currentAds:
         ad = ad[1]
         if targetAd == ad.title:
-            aic.controlFSM(ad, event)
-            msg = "AD:{}-{} is being {}".format(ad.title,ad.id, event)
+            msg = aic.controlFSM(ad, event)
             messagebox.showinfo("Alert", msg)
 
 
