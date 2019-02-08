@@ -1,6 +1,5 @@
 from tkinter import *
 from tkinter.ttk import *
-from tkinter import scrolledtext
 from tkinter import messagebox
 
 # AI devices imports
@@ -20,17 +19,13 @@ from SmartAdFSM.AdUtility import AdHelperMethods as ahm
 currentAds = []        # This holds every add from every service provider.
 apiYahooAds = []  # This holds every yahoo add
 
+
+
 # Test Ad simulate call from API
 # TODO: Create call to API for Yahoo Ad to get every ad that is available
 jsonFile = "TestAds/YahooAd.json"
-# read in the file
-parsedFile = yjp.readinJson(jsonFile)
-# create objects for each ad and add them into the Yahoo Ad list
-yjp.createAdObjects(apiYahooAds, parsedFile)
 
-# Ad yahoo ads to current Ads
-for ad in apiYahooAds:
-    currentAds.append((ad))
+ahm.CreateYahooAdList(jsonFile,apiYahooAds,currentAds)
 
 # Add ad values into the list for dropdown and fsm
 dropdownAdValues = []  # names of each ad
@@ -43,14 +38,19 @@ Button methods that will handle the UI input for button clicks
 
 def handleClick(dropdown, event):
     targetString = dropdown.get()
-    target= targetString.split(":")[0]
-    stat = targetString.split(":")[1]
-    eventListener(target, stat, event)
+    apiHost = targetString.split(":")[0]
+    target= targetString.split(":")[1]
+    stat = targetString.split(":")[2]
+    # Preform all task like sending things to the service provider
+    eventListener(target, event)
 
-def eventListener(targetAd, stat, event):
-    print("Target:{} CurrentStatus: {} event {}".format(targetAd, stat, event))
+    ahm.CreateYahooAdList(jsonFile,apiYahooAds,currentAds)
+    ahm.UpdateUIValues(dropdownAdValues, currentAds)
+    ahm.UpdateUI(dropdown,dropdownAdValues)
 
+def eventListener(targetAd,event):
     for ad in currentAds:
+        ad = ad[1]
         if targetAd == ad.title:
             aic.controlFSM(ad, event)
             msg = "AD:{}-{} is being {}".format(ad.title,ad.id, event)
@@ -60,7 +60,7 @@ def eventListener(targetAd, stat, event):
 window = Tk()
 
 window.title("SmartAd Manager IgniterLabs")
-window.geometry("600x360")
+window.geometry("800x400")
 
 # Widgets
 
@@ -70,7 +70,7 @@ activeAdsLabel = Label(window, text="Current Ads Available")
 manualButtonLabel = Label(window, text="Manual Override Buttons", font=("Arial Bold", 12))
 
 # Combo box to select the Ad
-dropdownMenu = Combobox(window)
+dropdownMenu = Combobox(window, width=40)
 ahm.UpdateUIValues(dropdownAdValues, currentAds)
 ahm.UpdateUI(dropdownMenu, dropdownAdValues)
 
@@ -89,10 +89,10 @@ quitButton = Button(window, text="Quit",command=quit)
 
 # Set main label position on grid
 mainLabel.grid(sticky= W, column=0, row=0, columnspan=3)
-quitButton.grid(column=2, row=0)
+quitButton.grid(column=3, row=0)
 
 activeAdsLabel.grid(sticky=W, column=0, row=1)
-dropdownMenu.grid(sticky=W, column=1, row=1)
+dropdownMenu.grid(sticky=W, column=1, row=1, columnspan=3)
 
 manualButtonLabel.grid(sticky=W, column=0, row=2)
 activateButton.grid(sticky=W+E, column=0, row=3)
