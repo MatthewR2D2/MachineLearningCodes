@@ -6,6 +6,7 @@ from tkinter import messagebox
 # AI devices imports
 from SmartAdFSM import AIControlSystem as aic
 from SmartAdFSM.AdUtility import YahooJsonParser as yjp
+from SmartAdFSM.AdUtility import AdHelperMethods as ahm
 
 # Varialbes that are collected from differnt APIs
 # TODO:Replace with real ads from Google/Yahoo/Facebook
@@ -33,50 +34,27 @@ for ad in apiYahooAds:
 
 # Add ad values into the list for dropdown and fsm
 dropdownAdValues = []  # names of each ad
-for ad in currentAds:
-    title = ad.title
-    dropdownAdValues.append(title)
+
 
 
 '''
 Button methods that will handle the UI input for button clicks
 '''
 
+def handleClick(dropdown, event):
+    targetString = dropdown.get()
+    target= targetString.split(":")[0]
+    stat = targetString.split(":")[1]
+    eventListener(target, stat, event)
 
-def activateClicked():
-    target = dropdownMenu.get()
-    msg = "{} Ad is now active".format(target)
-    for targetAd in currentAds:
-        if target == targetAd.title:
-            aic.controlFSM(targetAd, "activate")
-            messagebox.showinfo('Action', msg)
-            break
+def eventListener(targetAd, stat, event):
+    print("Target:{} CurrentStatus: {} event {}".format(targetAd, stat, event))
 
-
-def deactivateClicked():
-    target = dropdownMenu.get()
-    msg = "{} Ad in now inactive".format(target)
-    for targetAd in currentAds:
-        if target == targetAd.title:
-            aic.controlFSM(targetAd, "pause")
-            messagebox.showinfo('Action', msg)
-            break
-
-
-def endClicked():
-    target = dropdownMenu.get()
-    msg = "{} Ad in now ended".format(target)
-    for targetAd in currentAds:
-        if target == targetAd.title:
-            aic.controlFSM(targetAd,  "delete")
-            messagebox.showinfo('Action', msg)
-            break
-
-def eventListener(targetAd, event):
     for ad in currentAds:
         if targetAd == ad.title:
             aic.controlFSM(ad, event)
-            messagebox.showinfo("{} has been done to AD:{} ID:{}".format(event, ad.title, ad.id))
+            msg = "AD:{}-{} is being {}".format(ad.title,ad.id, event)
+            messagebox.showinfo("Alert", msg)
 
 
 window = Tk()
@@ -93,18 +71,16 @@ manualButtonLabel = Label(window, text="Manual Override Buttons", font=("Arial B
 
 # Combo box to select the Ad
 dropdownMenu = Combobox(window)
-# Set the dropdownmenu contents
-dropdownMenu['values'] = dropdownAdValues
-# The init value
-dropdownMenu.current(0)
+ahm.UpdateUIValues(dropdownAdValues, currentAds)
+ahm.UpdateUI(dropdownMenu, dropdownAdValues)
 
 # Manual User override buttons
 # Activate button
-activateButton = Button(window, text="Activate Ad", command=activateClicked)
+activateButton = Button(window, text="Activate Ad", command=lambda: handleClick(dropdownMenu, "activate"))
 # Deactivate Button
-deactivateButton = Button(window, text="Deactivate Ad", command=deactivateClicked)
+deactivateButton = Button(window, text="Deactivate Ad", command=lambda: handleClick(dropdownMenu, "pause"))
 # End Button
-endButton = Button(window, text="End Ad", command=endClicked)
+endButton = Button(window, text="End Ad", command=lambda: handleClick(dropdownMenu, "delete"))
 
 # Menu Button
 # Quit button
