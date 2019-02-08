@@ -24,16 +24,23 @@ deleteAd Will delete the ad from the system and will not be reversible
 activateAd will set the status of the ad to Active system
 pauseAd will set the status of the ad to Pause in the system
 '''
+
+# Open a connection to YahooAPI
+# Create Json file to send
+# Send this to the endpoint
 def deleteAd(ad):
-    print("Sending Cancel to API for {}".format(ad.id))
+    print("Sending Cancel Request")
+    print("Ad-ID:{} is being deleted".format(ad.id))
 
 
 def activateAd(ad):
-    print("Sending Activate Request to API for {}".format(ad.id))
+    print("Sending Activate Request")
+    print("Ad-ID:{} is being Activated".format(ad.id))
 
 
 def pauseAd(ad):
-    print("Sending Pause Request to API for {}".format(ad.id))
+    print("Sending Pause Request")
+    print("Ad-ID:{} is being Paused".format(ad.id))
 
 
 # This is a test controller that takes in a machine and a trigger then set the machine state correctly
