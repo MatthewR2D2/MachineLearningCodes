@@ -43,8 +43,8 @@ In the future it will pull it off the Yahoo API
 '''
 
 
-def UpdateUIValues(comboValues, ads):
-    for ad in ads:
+def UpdateUIValues(comboValues, currentAds):
+    for ad in currentAds:
         title = ad.title
         status = ad.status
         comboValues.append(title + ':' + status)
