@@ -16,7 +16,7 @@ from SmartAdFSM.AdUtility import YahooJsonParser as yjp
 
 # List for ads
 # They are broken up first by service provider then added into a master list
-myAds = []        # This holds every add from every service provider.
+currentAds = []        # This holds every add from every service provider.
 apiYahooAds = []  # This holds every yahoo add
 
 # Test Ad simulate call from API
@@ -27,24 +27,16 @@ parsedFile = yjp.readinJson(jsonFile)
 # create objects for each ad and add them into the Yahoo Ad list
 yjp.createAdObjects(apiYahooAds, parsedFile)
 
+# Ad yahoo ads to current Ads
 for ad in apiYahooAds:
-    myAds.append((ad))
-
-# print("Test add")
-# for ad in myAds:
-#     print(ad)
-#     print(ad[0].id)
-#     print(ad[1].current)
-
-
+    currentAds.append((ad))
 
 # Add ad values into the list for dropdown and fsm
 dropdownAdValues = []  # names of each ad
-activeAds = []  # The FSM for each ad
-for ad in myAds:
+for ad in currentAds:
     title = ad.title
     dropdownAdValues.append(title)
-    activeAds.append(title + "\n")
+
 
 '''
 Button methods that will handle the UI input for button clicks
@@ -52,9 +44,9 @@ Button methods that will handle the UI input for button clicks
 
 
 def activateClicked():
-    target = combo.get()
+    target = dropdownMenu.get()
     msg = "{} Ad is now active".format(target)
-    for targetAd in myAds:
+    for targetAd in currentAds:
         if target == targetAd.title:
             aic.controlFSM(targetAd, "activate")
             messagebox.showinfo('Action', msg)
@@ -62,9 +54,9 @@ def activateClicked():
 
 
 def deactivateClicked():
-    target = combo.get()
+    target = dropdownMenu.get()
     msg = "{} Ad in now inactive".format(target)
-    for targetAd in myAds:
+    for targetAd in currentAds:
         if target == targetAd.title:
             aic.controlFSM(targetAd, "pause")
             messagebox.showinfo('Action', msg)
@@ -72,16 +64,19 @@ def deactivateClicked():
 
 
 def endClicked():
-    target = combo.get()
+    target = dropdownMenu.get()
     msg = "{} Ad in now ended".format(target)
-    for targetAd in myAds:
+    for targetAd in currentAds:
         if target == targetAd.title:
             aic.controlFSM(targetAd,  "delete")
             messagebox.showinfo('Action', msg)
-            # Make sure to remove this from the list
-            #myAds.remove(targetAd) # This will remove the ad from the list
-            # update all feilds
             break
+
+def eventListener(targetAd, event):
+    for ad in currentAds:
+        if targetAd == ad.title:
+            aic.controlFSM(ad, event)
+            messagebox.showinfo("{} has been done to AD:{} ID:{}".format(event, ad.title, ad.id))
 
 
 window = Tk()
@@ -91,45 +86,43 @@ window.geometry("600x360")
 
 # Widgets
 
-mainLabel = Label(window, text="Welcome to SmartAd management Tool",
-                  font=("Arial Bold", 12))
-# Activate button
-activateButton = Button(window, text="Activate Ad",
-                        command=activateClicked)
-# Deactivate Button
-deactivateButton = Button(window, text="Deactivate Ad",
-                          command=deactivateClicked)
-
-# End Button
-endButton = Button(window, text="End Ad",
-                   command=endClicked)
-# Quit button
-quitButton = Button(window, text="Quit",
-                    command=quit)
+# Labels for UI
+mainLabel = Label(window, text="Welcome to SmartAd management Tool", font=("Arial Bold", 12))
+activeAdsLabel = Label(window, text="Current Ads Available")
+manualButtonLabel = Label(window, text="Manual Override Buttons", font=("Arial Bold", 12))
 
 # Combo box to select the Ad
-combo = Combobox(window)
+dropdownMenu = Combobox(window)
 # Set the dropdownmenu contents
-combo['values'] = dropdownAdValues
+dropdownMenu['values'] = dropdownAdValues
 # The init value
-combo.current(0)
+dropdownMenu.current(0)
 
-activeAdsLabel = Label(window, text="Current Ads Available")
+# Manual User override buttons
+# Activate button
+activateButton = Button(window, text="Activate Ad", command=activateClicked)
+# Deactivate Button
+deactivateButton = Button(window, text="Deactivate Ad", command=deactivateClicked)
+# End Button
+endButton = Button(window, text="End Ad", command=endClicked)
 
-# Text filed for user
-textFeild = scrolledtext.ScrolledText(window, width=40, height=10)
-# set the textfeild' contents
-for actAds in activeAds:
-    textFeild.insert(INSERT, actAds)
+# Menu Button
+# Quit button
+quitButton = Button(window, text="Quit",command=quit)
+
 
 # Set main label position on grid
-mainLabel.grid(column=0, row=0)
-combo.grid(column=0, row=1)
-activateButton.grid(column=1, row=1)
-deactivateButton.grid(column=2, row=1)
-endButton.grid(column=3, row=1)
-activeAdsLabel.grid(column=0, row=2)
-textFeild.grid(column=0, row=3)
-quitButton.grid(column=0, row=4)
+mainLabel.grid(sticky= W, column=0, row=0, columnspan=3)
+quitButton.grid(column=2, row=0)
+
+activeAdsLabel.grid(sticky=W, column=0, row=1)
+dropdownMenu.grid(sticky=W, column=1, row=1)
+
+manualButtonLabel.grid(sticky=W, column=0, row=2)
+activateButton.grid(sticky=W+E, column=0, row=3)
+deactivateButton.grid(sticky=W+E,column=1, row=3)
+endButton.grid(sticky=W+E,column=2, row=3)
+
+
 
 window.mainloop()
