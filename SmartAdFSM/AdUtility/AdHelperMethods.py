@@ -17,21 +17,26 @@ __status__ = "Dev"
 '''
 
 from SmartAdFSM.AdUtility import YahooJsonParser as yjp
-from tkinter import *
 
 
-def CreateYahooAdList(jsonSource, yahooAdList, adList):
+def CreateYahooAdList(jsonSource, yahooAdList, currentAds):
     # Test Ad simulate call from API
     # TODO: Create call to API for Yahoo Ad to get every ad that is available
     readFromAPI = jsonSource
     # read in the file
     parsedFile = yjp.readinJson(readFromAPI)
+
+    # Clear all arrays Do this to make sure array is cleared
+    currentAds.clear()
+    yahooAdList.clear()
+
     # create objects for each ad and add them into the Yahoo Ad list
     yjp.createAdObjects(yahooAdList, parsedFile)
 
     # Then add all the new Yahoo parsed ads (Now Ad Objects) into the myAds list
+
     for ad in yahooAdList:
-        adList.append((ad))
+        currentAds.append(("Yahoo", ad))
 
 
 '''
@@ -43,15 +48,19 @@ In the future it will pull it off the Yahoo API
 '''
 
 
-def UpdateUIValues(comboValues, currentAds):
+def UpdateUIValues(dropdownValues, currentAds):
+    # clear array that holds list of values for the dropdown box
+    dropdownValues.clear()
     for ad in currentAds:
-        title = ad.title
-        status = ad.status
-        comboValues.append(title + ':' + status)
+        apiHost = ad[0]        # Where the ad is hosted
+        title = ad[1].title    # The title from the ad
+        status = ad[1].status  # The curent status of the ad
+        dropdownValues.append(apiHost + ":" + title + ':' + status)  # Create the list string for the drop down menu
 
 
 
 def UpdateUI(dropdownWidget, dropdownValues):
+    print(dropdownValues)
     dropdownWidget['values'] = dropdownValues
     # The init value
     dropdownWidget.current(0)
