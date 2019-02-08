@@ -60,7 +60,6 @@ def UpdateUIValues(dropdownValues, currentAds):
 
 
 def UpdateUI(dropdownWidget, dropdownValues):
-    print(dropdownValues)
     dropdownWidget['values'] = dropdownValues
     # The init value
     dropdownWidget.current(0)
