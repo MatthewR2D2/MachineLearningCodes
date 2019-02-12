@@ -23,10 +23,47 @@ yahooPostURL = "http://ptsv2.com/t/1bgt4-1549605359"
 
 body = {'ids': [12, 14, 50]}
 
-
 # Open a connection to YahooAPI
 # Create Json file to send
 # Send this to the endpoint
+
+'''
+This method will help create each FSM for each Ad services
+States available
+# START
+# ACTIVE
+# PAUSED
+# ON_HOLD
+# REJECTED
+# DELETED
+
+FSM flow
+START -> ON_HOLD 
+                <-> ACTIVE
+                            <-> PAUSED
+                                        <-> ACTIVE
+                                         -> ON_HOLD
+                                         -> REJECTED
+                                         -> DELETED
+                             -> ON_HOLD
+                             -> REJECTED
+                             -> DELETED
+                
+                <-> REJECTED
+                             -> DELETED
+                 -> DELETED
+'''
+
+'''
+Just need three methods to send to the Yahoo API
+Delete the ad
+activate the ad
+and pause the ad
+
+Rejections will have to be handled manually. 
+Oh hold is not accessible and this status is only for reviewing of a AD 
+'''
+
 
 def deleteAd(ad):
     print("Sending Cancel Request")
@@ -61,15 +98,21 @@ def controlFSM(ad, trigger):
         if ad.status == "ACTIVE":
             resultString = "Ad:{}-ID:{} is already Active".format(ad.title, ad.id)
         else:
-            activateAd(ad)
-            resultString = "Ad:{}-ID:{} is being activated".format(ad.title, ad.id)
+            if ad.status != "ON_HOLD" and ad.status != "DELETED" and ad.status != "REJECTED":
+                activateAd(ad)
+                resultString = "Ad:{}-ID:{} is being activated".format(ad.title, ad.id)
+            else:
+                resultString = "Ad:{}-ID:{} is currently {}, and cannot be activated".format(ad.title, ad.id, ad.status)
 
     elif trigger == "pause":
         if ad.status == "PAUSED":
             resultString = "Ad:{}-ID:{} is already paused".format(ad.title, ad.id)
         else:
-            pauseAd(ad)
-            resultString = "Ad:{}-ID:{} is being paused".format(ad.title, ad.id)
+            if ad.status != "ON_HOLD" and ad.status != "DELETED" and ad.status != "REJECTED":
+                pauseAd(ad)
+                resultString = "Ad:{}-ID:{} is being paused".format(ad.title, ad.id)
+            else:
+                resultString = "Ad:{}-ID:{} is currently {}, cannot be paused".format(ad.title, ad.id, ad.status)
 
     return resultString
 
