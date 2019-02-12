@@ -53,8 +53,10 @@ def eventListener(targetAd, event):
             msg = aic.controlFSM(ad, event)
             messagebox.showinfo("Alert", msg)
 
+
 def aiHandler(event, allAds):
     aic.aiControler(event, allAds)
+
 
 window = Tk()
 
@@ -67,6 +69,7 @@ window.geometry("800x400")
 mainLabel = Label(window, text="Welcome to SmartAd management Tool", font=("Arial Bold", 12))
 activeAdsLabel = Label(window, text="Current Ads Available")
 manualButtonLabel = Label(window, text="Manual Override Buttons", font=("Arial Bold", 12))
+simulationLabel = Label(window, text="Simulation Buttons for AI Event handler", font=("Arial Bold", 12))
 
 # Combo box to select the Ad
 dropdownMenu = Combobox(window, width=40)
@@ -81,8 +84,9 @@ deactivateButton = Button(window, text="Deactivate Ad", command=lambda: handleCl
 # End Button
 endButton = Button(window, text="End Ad", command=lambda: handleClick(dropdownMenu, "delete"))
 
-targetMetButton = Button(window, text="Simulate Target Met", command = lambda: aiHandler("Target Reached", currentAds))
-newDayButton = Button(window, text= "Start a New Day", command= lambda : aiHandler("New Day", currentAds))
+stopAllAdsButton = Button(window, text="Simulate Stop All Ads", command=lambda:  aiHandler("Stop All Ads", currentAds))
+targetMetButton = Button(window, text="Simulate Target Met", command=lambda: aiHandler("Target Reached", currentAds))
+newDayButton = Button(window, text="Start a New Day", command=lambda: aiHandler("New Day", currentAds))
 
 # Menu Button
 # Quit button
@@ -100,7 +104,9 @@ activateButton.grid(sticky=W + E, column=0, row=3)
 deactivateButton.grid(sticky=W + E, column=1, row=3)
 endButton.grid(sticky=W + E, column=2, row=3)
 
-targetMetButton.grid(sticky=W, column=0, row=4)
-newDayButton.grid(sticky=W + E, column=1, row=4)
+simulationLabel.grid(sticky=W, column=0, row=4)
+targetMetButton.grid(sticky=W, column=0, row=5)
+newDayButton.grid(sticky=W + E, column=1, row=5)
+stopAllAdsButton.grid(sticky=W + E, column=2, row=5)
 
 window.mainloop()
