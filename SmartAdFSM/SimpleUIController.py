@@ -53,6 +53,8 @@ def eventListener(targetAd, event):
             msg = aic.controlFSM(ad, event)
             messagebox.showinfo("Alert", msg)
 
+def aiHandler(event, allAds):
+    aic.aiControler(event, allAds)
 
 window = Tk()
 
@@ -79,6 +81,9 @@ deactivateButton = Button(window, text="Deactivate Ad", command=lambda: handleCl
 # End Button
 endButton = Button(window, text="End Ad", command=lambda: handleClick(dropdownMenu, "delete"))
 
+targetMetButton = Button(window, text="Simulate Target Met", command = lambda: aiHandler("Target Reached", currentAds))
+newDayButton = Button(window, text= "Start a New Day", command= lambda : aiHandler("New Day", currentAds))
+
 # Menu Button
 # Quit button
 quitButton = Button(window, text="Quit", command=quit)
@@ -94,5 +99,8 @@ manualButtonLabel.grid(sticky=W, column=0, row=2)
 activateButton.grid(sticky=W + E, column=0, row=3)
 deactivateButton.grid(sticky=W + E, column=1, row=3)
 endButton.grid(sticky=W + E, column=2, row=3)
+
+targetMetButton.grid(sticky=W, column=0, row=4)
+newDayButton.grid(sticky=W + E, column=1, row=4)
 
 window.mainloop()
