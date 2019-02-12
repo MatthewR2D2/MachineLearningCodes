@@ -6,6 +6,7 @@ from tkinter import messagebox
 from SmartAdFSM import AIControlSystem as aic
 from SmartAdFSM.AdUtility import YahooJsonParser as yjp
 from SmartAdFSM.AdUtility import AdHelperMethods as ahm
+import requests
 
 # Varialbes that are collected from differnt APIs
 # TODO:Replace with real ads from Google/Yahoo/Facebook
@@ -13,17 +14,26 @@ from SmartAdFSM.AdUtility import AdHelperMethods as ahm
 #  1: list of all ads form API, '(Yahoo, Google, Facebook)
 #  2: FSM for all ads
 
+# Test Ad simulate call from API
+# TODO: Create call to API for Yahoo Ad to get every ad that is available
+# Links to Json Files
+jsonFile = "TestAds/YahooAd.json"
+yahooGetAPIURL = "https://api.jsonbin.io/b/5c6244031198012fc894e9ca"
+
+readFromFile = True  # Tell this to either read from a file or from a url
+if readFromFile:
+    myJson = jsonFile
+else:
+    # Request method for getting the Json file from Yahoo API
+    r = requests.get(yahooGetAPIURL)
+    myJson = r.json()
 
 # List for ads
 # They are broken up first by service provider then added into a master list
 currentAds = []  # This holds every add from every service provider.
 apiYahooAds = []  # This holds every yahoo add
 
-# Test Ad simulate call from API
-# TODO: Create call to API for Yahoo Ad to get every ad that is available
-jsonFile = "TestAds/YahooAd.json"
-
-ahm.CreateYahooAdList(jsonFile, apiYahooAds, currentAds)
+ahm.CreateYahooAdList(readFromFile, myJson, apiYahooAds, currentAds)
 
 # Add ad values into the list for dropdown and fsm
 dropdownAdValues = []  # names of each ad
@@ -41,7 +51,7 @@ def handleClick(dropdown, event):
     # Preform all task like sending things to the service provider
     eventListener(target, event)
 
-    ahm.CreateYahooAdList(jsonFile, apiYahooAds, currentAds)
+    ahm.CreateYahooAdList(readFromFile, myJson, apiYahooAds, currentAds)
     ahm.UpdateUIValues(dropdownAdValues, currentAds)
     ahm.UpdateUI(dropdown, dropdownAdValues)
 
@@ -84,7 +94,7 @@ deactivateButton = Button(window, text="Deactivate Ad", command=lambda: handleCl
 # End Button
 endButton = Button(window, text="End Ad", command=lambda: handleClick(dropdownMenu, "delete"))
 
-stopAllAdsButton = Button(window, text="Simulate Stop All Ads", command=lambda:  aiHandler("Stop All Ads", currentAds))
+stopAllAdsButton = Button(window, text="Simulate Stop All Ads", command=lambda: aiHandler("Stop All Ads", currentAds))
 targetMetButton = Button(window, text="Simulate Target Met", command=lambda: aiHandler("Target Reached", currentAds))
 newDayButton = Button(window, text="Start a New Day", command=lambda: aiHandler("New Day", currentAds))
 
