@@ -19,19 +19,21 @@ __status__ = "Dev"
 from SmartAdFSM.AdUtility import YahooJsonParser as yjp
 
 
-def CreateYahooAdList(jsonSource, yahooAdList, currentAds):
-    # Test Ad simulate call from API
-    # TODO: Create call to API for Yahoo Ad to get every ad that is available
-    readFromAPI = jsonSource
-    # read in the file
-    parsedFile = yjp.readinJson(readFromAPI)
+def CreateYahooAdList(readFromFile, myjson, yahooAdList, currentAds):
 
     # Clear all arrays Do this to make sure array is cleared
     currentAds.clear()
     yahooAdList.clear()
 
-    # create objects for each ad and add them into the Yahoo Ad list
-    yjp.createAdObjects(yahooAdList, parsedFile)
+    if readFromFile:
+        readFromAPI = myjson
+        # read in the file
+        parsedFile = yjp.readinJson(readFromAPI)
+        # create objects for each ad and add them into the Yahoo Ad list
+        yjp.createAdObjects(yahooAdList, parsedFile)
+    else:
+        # create objects for each ad and add them into the Yahoo Ad list
+        yjp.createAdObjects(yahooAdList, myjson)
 
     # Then add all the new Yahoo parsed ads (Now Ad Objects) into the myAds list
 
