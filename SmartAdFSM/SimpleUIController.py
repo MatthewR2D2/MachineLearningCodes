@@ -16,39 +16,37 @@ from SmartAdFSM.AdUtility import AdHelperMethods as ahm
 
 # List for ads
 # They are broken up first by service provider then added into a master list
-currentAds = []        # This holds every add from every service provider.
+currentAds = []  # This holds every add from every service provider.
 apiYahooAds = []  # This holds every yahoo add
-
-
 
 # Test Ad simulate call from API
 # TODO: Create call to API for Yahoo Ad to get every ad that is available
 jsonFile = "TestAds/YahooAd.json"
 
-ahm.CreateYahooAdList(jsonFile,apiYahooAds,currentAds)
+ahm.CreateYahooAdList(jsonFile, apiYahooAds, currentAds)
 
 # Add ad values into the list for dropdown and fsm
 dropdownAdValues = []  # names of each ad
-
-
 
 '''
 Button methods that will handle the UI input for button clicks
 '''
 
+
 def handleClick(dropdown, event):
     targetString = dropdown.get()
     apiHost = targetString.split(":")[0]
-    target= targetString.split(":")[1]
+    target = targetString.split(":")[1]
     stat = targetString.split(":")[2]
     # Preform all task like sending things to the service provider
     eventListener(target, event)
 
-    ahm.CreateYahooAdList(jsonFile,apiYahooAds,currentAds)
+    ahm.CreateYahooAdList(jsonFile, apiYahooAds, currentAds)
     ahm.UpdateUIValues(dropdownAdValues, currentAds)
-    ahm.UpdateUI(dropdown,dropdownAdValues)
+    ahm.UpdateUI(dropdown, dropdownAdValues)
 
-def eventListener(targetAd,event):
+
+def eventListener(targetAd, event):
     for ad in currentAds:
         ad = ad[1]
         if targetAd == ad.title:
@@ -83,21 +81,18 @@ endButton = Button(window, text="End Ad", command=lambda: handleClick(dropdownMe
 
 # Menu Button
 # Quit button
-quitButton = Button(window, text="Quit",command=quit)
-
+quitButton = Button(window, text="Quit", command=quit)
 
 # Set main label position on grid
-mainLabel.grid(sticky= W, column=0, row=0, columnspan=3)
+mainLabel.grid(sticky=W, column=0, row=0, columnspan=3)
 quitButton.grid(column=3, row=0)
 
 activeAdsLabel.grid(sticky=W, column=0, row=1)
 dropdownMenu.grid(sticky=W, column=1, row=1, columnspan=3)
 
 manualButtonLabel.grid(sticky=W, column=0, row=2)
-activateButton.grid(sticky=W+E, column=0, row=3)
-deactivateButton.grid(sticky=W+E,column=1, row=3)
-endButton.grid(sticky=W+E,column=2, row=3)
-
-
+activateButton.grid(sticky=W + E, column=0, row=3)
+deactivateButton.grid(sticky=W + E, column=1, row=3)
+endButton.grid(sticky=W + E, column=2, row=3)
 
 window.mainloop()
