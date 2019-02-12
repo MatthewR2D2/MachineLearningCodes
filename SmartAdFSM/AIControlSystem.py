@@ -82,6 +82,21 @@ def pauseAd(ad):
     r = requests.post(yahooPostURL, json=body)
     print(r.status_code)
 
+def aiControler(event, currentAds):
+    if event == "New Day":
+        for ads in currentAds:
+            ad = ads[1]
+            controlFSM(ad, "activate")
+    elif event == "Target Reached":
+        for ads in currentAds:
+            ad = ads[1]
+            controlFSM(ad, "pause")
+    elif event == "Close All Ads":
+        for ads in currentAds:
+            ad = ads[1]
+            controlFSM(ad, "delete")
+
+
 
 # This is a test controller that takes in a machine and a trigger then set the machine state correctly
 def controlFSM(ad, trigger):
