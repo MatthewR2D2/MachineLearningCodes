@@ -4,7 +4,6 @@ from tkinter import messagebox
 
 # AI devices imports
 from SmartAdFSM import AIControlSystem as aic
-from SmartAdFSM.AdUtility import YahooJsonParser as yjp
 from SmartAdFSM.AdUtility import AdHelperMethods as ahm
 import requests
 
@@ -12,15 +11,13 @@ import requests
 # TODO:Replace with real ads from Google/Yahoo/Facebook
 # TODO: Create method to gather all avalialbe ads from service providers and create
 #  1: list of all ads form API, '(Yahoo, Google, Facebook)
-#  2: FSM for all ads
 
-# Test Ad simulate call from API
-# TODO: Create call to API for Yahoo Ad to get every ad that is available
 # Links to Json Files
 jsonFile = "TestAds/YahooAd.json"
-yahooGetAPIURL = "https://api.jsonbin.io/b/5c6244031198012fc894e9ca"
+yahooGetAPIURL = "https://api.jsonbin.io/b/5c6244031198012fc894e9ca"  # Change this to the one for ads
 
-readFromFile = True  # Tell this to either read from a file or from a url
+# Tell this to either read from a file or from a url
+readFromFile = True
 if readFromFile:
     myJson = jsonFile
 else:
@@ -33,27 +30,43 @@ else:
 currentAds = []  # This holds every add from every service provider.
 apiYahooAds = []  # This holds every yahoo add
 
+# Call method from AdHelperMethods to create the yahoo ad and add it to the currentAds list
 ahm.CreateYahooAdList(readFromFile, myJson, apiYahooAds, currentAds)
 
-# Add ad values into the list for dropdown and fsm
+# Add ad values into the list for dropdown menu
 dropdownAdValues = []  # names of each ad
 
 '''
 Button methods that will handle the UI input for button clicks
 '''
 
+'''
+This is the initial button click event. This works for all buttons
+@:param dropdown - this is the dropdownWidget which the input to the function 
+@:param event - this is the event that triggers something it may be manual or from another event outside
+'''
+
 
 def handleClick(dropdown, event):
+    # this gets the string from the dropdown menu
     targetString = dropdown.get()
-    apiHost = targetString.split(":")[0]
-    target = targetString.split(":")[1]
-    stat = targetString.split(":")[2]
+    apiHost = targetString.split(":")[0]  # Who is hosting the ad (yahoo/google/facebook)
+    target = targetString.split(":")[1]  # The title of the Ad
+    stat = targetString.split(":")[2]  # the current status of the ad
     # Preform all task like sending things to the service provider
     eventListener(target, event)
-
+    # Reset the UI by calling the change from the
     ahm.CreateYahooAdList(readFromFile, myJson, apiYahooAds, currentAds)
+    # Create the UI values and update the UI
     ahm.UpdateUIValues(dropdownAdValues, currentAds)
     ahm.UpdateUI(dropdown, dropdownAdValues)
+
+
+'''
+This method will be used to handle the event that was triggered
+@:param targetAd is a single ad which will will be changed either yahoo/google/facebook
+@:param event - this is the event
+'''
 
 
 def eventListener(targetAd, event):
@@ -64,9 +77,21 @@ def eventListener(targetAd, event):
             messagebox.showinfo("Alert", msg)
 
 
+'''
+This passes the events and ads to the AI controller
+@:param event - which is the event that are the tirggers
+@:param allAds - this is all the ads that are available to use. 
+'''
+
+
 def aiHandler(event, allAds):
     aic.aiControler(event, allAds)
 
+
+'''
+This is the simple User interface which can be used to manually interact with the ads online from one single
+access point. 
+'''
 
 window = Tk()
 
@@ -83,6 +108,7 @@ simulationLabel = Label(window, text="Simulation Buttons for AI Event handler", 
 
 # Combo box to select the Ad
 dropdownMenu = Combobox(window, width=40)
+# Initial Setup of values
 ahm.UpdateUIValues(dropdownAdValues, currentAds)
 ahm.UpdateUI(dropdownMenu, dropdownAdValues)
 
@@ -94,6 +120,8 @@ deactivateButton = Button(window, text="Deactivate Ad", command=lambda: handleCl
 # End Button
 endButton = Button(window, text="End Ad", command=lambda: handleClick(dropdownMenu, "delete"))
 
+
+# Simulation buttons should be removed later on
 stopAllAdsButton = Button(window, text="Simulate Stop All Ads", command=lambda: aiHandler("Stop All Ads", currentAds))
 targetMetButton = Button(window, text="Simulate Target Met", command=lambda: aiHandler("Target Reached", currentAds))
 newDayButton = Button(window, text="Start a New Day", command=lambda: aiHandler("New Day", currentAds))
