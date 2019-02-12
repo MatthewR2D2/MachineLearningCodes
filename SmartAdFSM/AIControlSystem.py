@@ -22,10 +22,6 @@ import requests
 yahooPostURL = "http://ptsv2.com/t/1bgt4-1549605359"
 
 
-# Open a connection to YahooAPI
-# Create Json file to send
-# Send this to the endpoint
-
 '''
 This method will help create each FSM for each Ad services
 States available
@@ -80,9 +76,9 @@ This method is used for deleting the ads by sending the request to the Yahoo API
 def deleteAd(ad):
     print("Sending Cancel Request")
     body = {
-            "id": ad.id,
-            "status": "DELETED"
-           }
+        "id": ad.id,
+        "status": "DELETED"
+    }
     r = requests.post(yahooPostURL, json=body)
     print(r.status_code)
 
@@ -96,9 +92,9 @@ This method is used for activate the ads by sending the request to the Yahoo API
 def activateAd(ad):
     print("Sending Activate Request")
     body = {
-                "id": ad.id,
-                "status": "ACTIVE"
-            }
+        "id": ad.id,
+        "status": "ACTIVE"
+    }
     r = requests.post(yahooPostURL, json=body)
     print(r.status_code)
 
@@ -112,9 +108,9 @@ This method is used for pausing the ads by sending the request to the Yahoo API
 def pauseAd(ad):
     print("Sending Pause Request")
     body = {
-                "id": ad.id,
-                "status": "PAUSED"
-            }
+        "id": ad.id,
+        "status": "PAUSED"
+    }
     r = requests.post(yahooPostURL, json=body)
     print(r.status_code)
 
@@ -124,6 +120,8 @@ This method is the AI controller when there is a event that occurred
 @:param: event - this is the event that happened
 @:param: currentAds - this is a dictionary of every available ads that are hosted on Yahoo  
 '''
+
+
 def aiControler(event, currentAds):
     if event == "New Day":
         for ads in currentAds:
@@ -139,7 +137,12 @@ def aiControler(event, currentAds):
             controlFSM(ad, "delete")
 
 
+'''
 # This is a test controller that takes in a machine and a trigger then set the machine state correctly
+@:param ad - this is the ad that is being adjusted
+@:param trigger - this is the trigger that or the event that is called
+@:return a single message to display on the UI
+'''
 def controlFSM(ad, trigger):
     resultString = ""
 
