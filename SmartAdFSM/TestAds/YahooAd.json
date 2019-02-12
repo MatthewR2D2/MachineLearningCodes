@@ -40,5 +40,68 @@
               "impressionTrackingUrls": {
                  "impression": null
               }
+  },
+  {
+      "id": 320326,
+      "description": "OnHold Ad description",
+      "adGroupId": 46758,
+      "status": "ON_HOLD",
+      "title": "Power Boost",
+      "advertiserId": 87292,
+      "landingUrl": "http://www.yahoo.com",
+      "imageUrl": "http://image2.jpg",
+      "sponsoredBy": "Sandboxes Inc",
+      "campaignId": 31369,
+      "displayUrl": "http://www.yahoo.com",
+      "imageUrlHQ": null,
+      "contentUrl": null,
+      "callToActionText": null,
+          "videoPrimaryUrl": null,
+          "adName": null,
+              "impressionTrackingUrls": {
+                 "impression": null
+              }
+  },
+  {
+      "id": 320327,
+      "description": "Rejected Ad description",
+      "adGroupId": 46758,
+      "status": "REJECTED",
+      "title": "Cool Ad",
+      "advertiserId": 87292,
+      "landingUrl": "http://www.yahoo.com",
+      "imageUrl": "http://image2.jpg",
+      "sponsoredBy": "Sandboxes Inc",
+      "campaignId": 31369,
+      "displayUrl": "http://www.yahoo.com",
+      "imageUrlHQ": null,
+      "contentUrl": null,
+      "callToActionText": null,
+          "videoPrimaryUrl": null,
+          "adName": null,
+              "impressionTrackingUrls": {
+                 "impression": null
+              }
+  },
+  {
+      "id": 320328,
+      "description": "Deleted Ad description",
+      "adGroupId": 46758,
+      "status": "DELETED",
+      "title": "Fin Ad",
+      "advertiserId": 87292,
+      "landingUrl": "http://www.yahoo.com",
+      "imageUrl": "http://image2.jpg",
+      "sponsoredBy": "Sandboxes Inc",
+      "campaignId": 31369,
+      "displayUrl": "http://www.yahoo.com",
+      "imageUrlHQ": null,
+      "contentUrl": null,
+      "callToActionText": null,
+          "videoPrimaryUrl": null,
+          "adName": null,
+              "impressionTrackingUrls": {
+                 "impression": null
+              }
   }
 ]
