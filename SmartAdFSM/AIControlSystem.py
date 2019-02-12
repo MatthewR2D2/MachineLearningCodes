@@ -21,7 +21,6 @@ import requests
 
 yahooPostURL = "http://ptsv2.com/t/1bgt4-1549605359"
 
-body = {'ids': [12, 14, 50]}
 
 # Open a connection to YahooAPI
 # Create Json file to send
@@ -64,24 +63,67 @@ Rejections will have to be handled manually.
 Oh hold is not accessible and this status is only for reviewing of a AD 
 '''
 
+'''
+body for adjusting the status
+{
+  "id": 320323,
+  "status": "DELETED"
+}
+'''
+
+'''
+This method is used for deleting the ads by sending the request to the Yahoo API
+@:param ad - the ad that will be deleted
+'''
+
 
 def deleteAd(ad):
     print("Sending Cancel Request")
+    body = {
+            "id": ad.id,
+            "status": "DELETED"
+           }
     r = requests.post(yahooPostURL, json=body)
     print(r.status_code)
+
+
+'''
+This method is used for activate the ads by sending the request to the Yahoo API
+@:param ad - the ad that will be activated
+'''
 
 
 def activateAd(ad):
     print("Sending Activate Request")
+    body = {
+                "id": ad.id,
+                "status": "ACTIVE"
+            }
     r = requests.post(yahooPostURL, json=body)
     print(r.status_code)
+
+
+'''
+This method is used for pausing the ads by sending the request to the Yahoo API
+@:param ad - the ad that will be paused
+'''
 
 
 def pauseAd(ad):
     print("Sending Pause Request")
+    body = {
+                "id": ad.id,
+                "status": "PAUSED"
+            }
     r = requests.post(yahooPostURL, json=body)
     print(r.status_code)
 
+
+'''
+This method is the AI controller when there is a event that occurred
+@:param: event - this is the event that happened
+@:param: currentAds - this is a dictionary of every available ads that are hosted on Yahoo  
+'''
 def aiControler(event, currentAds):
     if event == "New Day":
         for ads in currentAds:
@@ -91,11 +133,10 @@ def aiControler(event, currentAds):
         for ads in currentAds:
             ad = ads[1]
             controlFSM(ad, "pause")
-    elif event == "Close All Ads":
+    elif event == "Stop All Ads":
         for ads in currentAds:
             ad = ads[1]
             controlFSM(ad, "delete")
-
 
 
 # This is a test controller that takes in a machine and a trigger then set the machine state correctly
