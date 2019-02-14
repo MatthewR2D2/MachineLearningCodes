@@ -17,75 +17,167 @@ __status__ = "Dev"
 
 '''
 
-from SmartAdFSM import YahooFiniteStateMachine as fsm
+import requests
+
+yahooPostURL = "http://ptsv2.com/t/1bgt4-1549605359"
 
 
+'''
+This method will help create each FSM for each Ad services
+States available
+# START
+# ACTIVE
+# PAUSED
+# ON_HOLD
+# REJECTED
+# DELETED
+
+FSM flow
+START -> ON_HOLD 
+                <-> ACTIVE
+                            <-> PAUSED
+                                        <-> ACTIVE
+                                         -> ON_HOLD
+                                         -> REJECTED
+                                         -> DELETED
+                             -> ON_HOLD
+                             -> REJECTED
+                             -> DELETED
+                
+                <-> REJECTED
+                             -> DELETED
+                 -> DELETED
+'''
+
+'''
+Just need three methods to send to the Yahoo API
+Delete the ad
+activate the ad
+and pause the ad
+
+Rejections will have to be handled manually. 
+Oh hold is not accessible and this status is only for reviewing of a AD 
+'''
+
+'''
+body for adjusting the status
+{
+  "id": 320323,
+  "status": "DELETED"
+}
+'''
+
+'''
+This method is used for deleting the ads by sending the request to the Yahoo API
+@:param ad - the ad that will be deleted
+'''
+
+
+def deleteAd(ad):
+    print("Sending Cancel Request")
+    body = {
+        "id": ad.id,
+        "status": "DELETED"
+    }
+    r = requests.post(yahooPostURL, json=body)
+    print(r.status_code)
+
+
+'''
+This method is used for activate the ads by sending the request to the Yahoo API
+@:param ad - the ad that will be activated
+'''
+
+
+def activateAd(ad):
+    print("Sending Activate Request")
+    body = {
+        "id": ad.id,
+        "status": "ACTIVE"
+    }
+    r = requests.post(yahooPostURL, json=body)
+    print(r.status_code)
+
+
+'''
+This method is used for pausing the ads by sending the request to the Yahoo API
+@:param ad - the ad that will be paused
+'''
+
+
+def pauseAd(ad):
+    print("Sending Pause Request")
+    body = {
+        "id": ad.id,
+        "status": "PAUSED"
+    }
+    r = requests.post(yahooPostURL, json=body)
+    print(r.status_code)
+
+
+'''
+This method is the AI controller when there is a event that occurred
+@:param: event - this is the event that happened
+@:param: currentAds - this is a dictionary of every available ads that are hosted on Yahoo  
+'''
+
+
+def aiControler(event, currentAds):
+    if event == "New Day":
+        for ads in currentAds:
+            ad = ads[1]
+            controlFSM(ad, "activate")
+    elif event == "Target Reached":
+        for ads in currentAds:
+            ad = ads[1]
+            controlFSM(ad, "pause")
+    elif event == "Stop All Ads":
+        for ads in currentAds:
+            ad = ads[1]
+            controlFSM(ad, "delete")
+
+
+'''
 # This is a test controller that takes in a machine and a trigger then set the machine state correctly
-def controlFSM(machine, trigger):
-    if trigger == "start":
-        if machine.current == "START":
-            print('Ad is all ready running')
+@:param ad - this is the ad that is being adjusted
+@:param trigger - this is the trigger that or the event that is called
+@:return a single message to display on the UI
+'''
+def controlFSM(ad, trigger):
+    resultString = ""
+
+    if trigger == "delete":
+        if ad.status == "DELETED":
+            resultString = "Ad:{}-ID:{} has already ended and will be removed soon".format(ad.title, ad.id)
         else:
-            print("You cannot start a ad that has already started")
-    elif trigger == "end":
-        if machine.current == "DELETED":
-            print("Ad is all ready ended")
-        else:
-            print("Ad is ending")
-            machine.end()
+            deleteAd(ad)
+            resultString = "Ad:{}-ID:{} is being deleted".format(ad.title, ad.id)
+
     elif trigger == "activate":
-        if machine.current == "ACTIVE":
-            print("Ad is all ready active")
+        if ad.status == "ACTIVE":
+            resultString = "Ad:{}-ID:{} is already Active".format(ad.title, ad.id)
         else:
-            machine.activate()
-            print("Ad Activated")
-    elif trigger == "deactivate":
-        if machine.current == "PAUSED":
-            print("Ad is already inactive")
+            if ad.status != "ON_HOLD" and ad.status != "DELETED" and ad.status != "REJECTED":
+                activateAd(ad)
+                resultString = "Ad:{}-ID:{} is being activated".format(ad.title, ad.id)
+            else:
+                resultString = "Ad:{}-ID:{} is currently {}, and cannot be activated".format(ad.title, ad.id, ad.status)
+
+    elif trigger == "pause":
+        if ad.status == "PAUSED":
+            resultString = "Ad:{}-ID:{} is already paused".format(ad.title, ad.id)
         else:
-            machine.deactivate()
-            print("Ad is now inactive")
+            if ad.status != "ON_HOLD" and ad.status != "DELETED" and ad.status != "REJECTED":
+                pauseAd(ad)
+                resultString = "Ad:{}-ID:{} is being paused".format(ad.title, ad.id)
+            else:
+                resultString = "Ad:{}-ID:{} is currently {}, cannot be paused".format(ad.title, ad.id, ad.status)
 
-
-def printStateOfEachMachine(name, machine):
-    print('FSM: {} is at state {}'.format(name, machine.current))
+    return resultString
 
 
 '''
 # this is an example of how to use the FMS and AI controller together 
 '''
 if __name__ == '__main__':
-    print("Creating Yahoo ad controler")
-    # Create a FSM for yahoo ad and google ad
-    yahooMachine = fsm.createFSM()
-    googleMachine = fsm.createFSM()
-    facebookMachine = fsm.createFSM()
-
-    printStateOfEachMachine("Yahoo", yahooMachine)
-    printStateOfEachMachine("Google", googleMachine)
-    printStateOfEachMachine("Facebook", facebookMachine)
-
-    activateTrigger = "activate"
-    deactivateTrigger = "deactivate"
-    endTrigger = "end"
-    startTrigger = "Start"
-
     print("Starting Simple Test")
-    controlFSM(yahooMachine, startTrigger)
-    controlFSM(yahooMachine, activateTrigger)
-    controlFSM(yahooMachine, activateTrigger)
-    controlFSM(yahooMachine, deactivateTrigger)
-    controlFSM(yahooMachine, deactivateTrigger)
-    controlFSM(yahooMachine, activateTrigger)
-    controlFSM(yahooMachine, startTrigger)
-    controlFSM(yahooMachine, activateTrigger)
-    print("Simple Test Finished Successfully")
-
-    controlFSM(googleMachine, endTrigger)
-
-    controlFSM(facebookMachine, deactivateTrigger)
-
-    # Create a FSM for yahoo ad
-    printStateOfEachMachine("Yahoo", yahooMachine)
-    printStateOfEachMachine("Google", googleMachine)
-    printStateOfEachMachine("Facebook", facebookMachine)
