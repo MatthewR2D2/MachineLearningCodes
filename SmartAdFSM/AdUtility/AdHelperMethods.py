@@ -74,7 +74,16 @@ This method is to update the UI for the dropdownWidget
 '''
 
 
-def UpdateUI(dropdownWidget, dropdownValues):
+def UpdateUI(dropdownWidget, listboxWidget,  dropdownValues):
+    getItemsPerLine(dropdownValues, listboxWidget)
     dropdownWidget['values'] = dropdownValues
     # The init value
     dropdownWidget.current(0)
+
+def getItemsPerLine(dropdownValues, listboxWidget):
+    # Clear the list
+    listboxWidget.delete(0,'end')
+    x = 1
+    for item in dropdownValues:
+        listboxWidget.insert(x, item)
+        x += 1
