@@ -47,19 +47,35 @@ This is the initial button click event. This works for all buttons
 '''
 
 
-def handleClick(dropdown, event):
+def handleClick(dropdown, listBox, event):
     # this gets the string from the dropdown menu
-    targetString = dropdown.get()
-    apiHost = targetString.split(":")[0]  # Who is hosting the ad (yahoo/google/facebook)
-    target = targetString.split(":")[1]  # The title of the Ad
-    stat = targetString.split(":")[2]  # the current status of the ad
+    #targetString = dropdown.get()
+    listboxTarget = listBox.get(ACTIVE)
+    print("List Target", listboxTarget)
+    apiHost = listboxTarget.split(":")[0]  # Who is hosting the ad (yahoo/google/facebook)
+    target = listboxTarget.split(":")[1]  # The title of the Ad
+    stat = listboxTarget.split(":")[2]  # the current status of the ad
     # Preform all task like sending things to the service provider
-    eventListener(target, event)
+
     # Reset the UI by calling the change from the
-    ahm.CreateYahooAdList(readFromFile, myJson, apiYahooAds, currentAds)
+    # Look at each host for each API
+    if apiHost == "Yahoo":
+        # Preform event manager task
+        eventListener(target, event)
+        # Create each ad for Yahoo vendor
+        ahm.CreateYahooAdList(readFromFile, myJson, apiYahooAds, currentAds)
+    elif apiHost == "Google":
+        print("Google is not supported yet")
+        # eventListener(target, event)
+    elif apiHost == "Facebook":
+        print("Facebook is not supported yet")
+        # eventListener(target, event)
+    else:
+        print("Missing API Host provider")
+
     # Create the UI values and update the UI
     ahm.UpdateUIValues(dropdownAdValues, currentAds)
-    ahm.UpdateUI(dropdown, dropdownAdValues)
+    ahm.UpdateUI(dropdown, listBox, dropdownAdValues)
 
 
 '''
@@ -101,50 +117,54 @@ window.geometry("800x400")
 # Widgets
 
 # Labels for UI
-mainLabel = Label(window, text="Welcome to SmartAd management Tool", font=("Arial Bold", 12))
-activeAdsLabel = Label(window, text="Current Ads Available")
-manualButtonLabel = Label(window, text="Manual Override Buttons", font=("Arial Bold", 12))
-simulationLabel = Label(window, text="Simulation Buttons for AI Event handler", font=("Arial Bold", 12))
+mainLabel = Label(window, text="SmartAd 管理ツール", font=("Arial Bold", 12))
+activeAdsLabel = Label(window, text="現在利用可能な広告")
+manualButtonLabel = Label(window, text="手動オーバーライドボタン", font=("Arial Bold", 12))
+simulationLabel = Label(window, text="AIイベントハンドラのシミュレーションボタン", font=("Arial Bold", 12))
 
 # Combo box to select the Ad
 dropdownMenu = Combobox(window, width=40)
 # Initial Setup of values
+listboxMenu = Listbox(window, width= 30)
+
 ahm.UpdateUIValues(dropdownAdValues, currentAds)
-ahm.UpdateUI(dropdownMenu, dropdownAdValues)
+ahm.UpdateUI(dropdownMenu, listboxMenu, dropdownAdValues)
 
 # Manual User override buttons
 # Activate button
-activateButton = Button(window, text="Activate Ad", command=lambda: handleClick(dropdownMenu, "activate"))
+activateButton = Button(window, text="活性化する AD AA", command=lambda: handleClick(dropdownMenu,listboxMenu, "activate"))
 # Deactivate Button
-deactivateButton = Button(window, text="Deactivate Ad", command=lambda: handleClick(dropdownMenu, "pause"))
+deactivateButton = Button(window, text="無効にする AD PA", command=lambda: handleClick(dropdownMenu,listboxMenu, "pause"))
 # End Button
-endButton = Button(window, text="End Ad", command=lambda: handleClick(dropdownMenu, "delete"))
+endButton = Button(window, text="削除する AD EA", command=lambda: handleClick(dropdownMenu,listboxMenu, "delete"))
 
 
 # Simulation buttons should be removed later on
-stopAllAdsButton = Button(window, text="Simulate Stop All Ads", command=lambda: aiHandler("Stop All Ads", currentAds))
-targetMetButton = Button(window, text="Simulate Target Met", command=lambda: aiHandler("Target Reached", currentAds))
-newDayButton = Button(window, text="Start a New Day", command=lambda: aiHandler("New Day", currentAds))
+stopAllAdsButton = Button(window, text="すべて削除する AD SAA", command=lambda: aiHandler("Stop All Ads", currentAds))
+targetMetButton = Button(window, text="目標を達成 STM", command=lambda: aiHandler("Target Reached", currentAds))
+newDayButton = Button(window, text="新しい日 SND", command=lambda: aiHandler("New Day", currentAds))
 
 # Menu Button
 # Quit button
-quitButton = Button(window, text="Quit", command=quit)
+quitButton = Button(window, text="終了する", command=quit)
 
 # Set main label position on grid
-mainLabel.grid(sticky=W, column=0, row=0, columnspan=3)
+mainLabel.grid(sticky=W, column=0, row=0, columnspan=4)
 quitButton.grid(column=3, row=0)
 
 activeAdsLabel.grid(sticky=W, column=0, row=1)
 dropdownMenu.grid(sticky=W, column=1, row=1, columnspan=3)
 
-manualButtonLabel.grid(sticky=W, column=0, row=2)
+manualButtonLabel.grid(sticky=W, column=0, row=2, columnspan=3)
 activateButton.grid(sticky=W + E, column=0, row=3)
 deactivateButton.grid(sticky=W + E, column=1, row=3)
 endButton.grid(sticky=W + E, column=2, row=3)
 
-simulationLabel.grid(sticky=W, column=0, row=4)
+simulationLabel.grid(sticky=W, column=0, row=4, columnspan=4)
 targetMetButton.grid(sticky=W, column=0, row=5)
 newDayButton.grid(sticky=W + E, column=1, row=5)
 stopAllAdsButton.grid(sticky=W + E, column=2, row=5)
+
+listboxMenu.grid(sticky=W + E, column=0, row=6)
 
 window.mainloop()
