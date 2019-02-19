@@ -33,8 +33,8 @@ apiYahooAds = []  # This holds every yahoo add
 # Call method from AdHelperMethods to create the yahoo ad and add it to the currentAds list
 ahm.CreateYahooAdList(readFromFile, myJson, apiYahooAds, currentAds)
 
-# Add ad values into the list for dropdown menu
-dropdownAdValues = []  # names of each ad
+# Add ad values into the list for listbox menu
+adValues = []  # names of each ad
 
 '''
 Button methods that will handle the UI input for button clicks
@@ -42,14 +42,13 @@ Button methods that will handle the UI input for button clicks
 
 '''
 This is the initial button click event. This works for all buttons
-@:param dropdown - this is the dropdownWidget which the input to the function 
+@:param listbox - this is the listbox window which the input to the function 
 @:param event - this is the event that triggers something it may be manual or from another event outside
 '''
 
 
-def handleClick(dropdown, listBox, event):
-    # this gets the string from the dropdown menu
-    #targetString = dropdown.get()
+def handleClick(listBox, event):
+
     listboxTarget = listBox.get(ACTIVE)
     print("List Target", listboxTarget)
     apiHost = listboxTarget.split(":")[0]  # Who is hosting the ad (yahoo/google/facebook)
@@ -74,8 +73,8 @@ def handleClick(dropdown, listBox, event):
         print("Missing API Host provider")
 
     # Create the UI values and update the UI
-    ahm.UpdateUIValues(dropdownAdValues, currentAds)
-    ahm.UpdateUI(dropdown, listBox, dropdownAdValues)
+    ahm.UpdateUIValues(adValues, currentAds)
+    ahm.UpdateUI(listBox, adValues)
 
 
 '''
@@ -89,7 +88,14 @@ def eventListener(targetAd, event):
     for ad in currentAds:
         ad = ad[1]
         if targetAd == ad.title:
-            msg = aic.controlFSM(ad, event)
+            msg, responseCode = aic.controlFSM(ad, event)
+            if responseCode == "":
+                responseCode = "Not Sent"
+            pastMessage = msg + ": Status: " + str(responseCode)
+            # Clear textbox
+            textBox.delete(1.0, END)
+            # Add new message
+            textBox.insert(INSERT, pastMessage)
             messagebox.showinfo("Alert", msg)
 
 
@@ -100,8 +106,12 @@ This passes the events and ads to the AI controller
 '''
 
 
-def aiHandler(event, allAds):
-    aic.aiControler(event, allAds)
+def aiHandler(event, numberConversions, numberLeads,  allAds):
+    message = aic.aiControler(event, numberConversions, numberLeads, allAds)
+    # Clear textbox
+    textBox.delete(1.0, END)
+    # Add new message
+    textBox.insert(INSERT, message)
 
 
 '''
@@ -121,50 +131,54 @@ mainLabel = Label(window, text="SmartAd 管理ツール", font=("Arial Bold", 12
 activeAdsLabel = Label(window, text="現在利用可能な広告")
 manualButtonLabel = Label(window, text="手動オーバーライドボタン", font=("Arial Bold", 12))
 simulationLabel = Label(window, text="AIイベントハンドラのシミュレーションボタン", font=("Arial Bold", 12))
+messageLabel = Label(window,  text="Output Message", font=("Arial Bold", 12))
 
-# Combo box to select the Ad
-dropdownMenu = Combobox(window, width=40)
+
 # Initial Setup of values
 listboxMenu = Listbox(window, width= 30)
-
-ahm.UpdateUIValues(dropdownAdValues, currentAds)
-ahm.UpdateUI(dropdownMenu, listboxMenu, dropdownAdValues)
+ahm.UpdateUIValues(adValues, currentAds)
+ahm.UpdateUI(listboxMenu, adValues)
 
 # Manual User override buttons
 # Activate button
-activateButton = Button(window, text="活性化する AD AA", command=lambda: handleClick(dropdownMenu,listboxMenu, "activate"))
+activateButton = Button(window, text="活性化する AD AA", command=lambda: handleClick(listboxMenu, "activate"))
 # Deactivate Button
-deactivateButton = Button(window, text="無効にする AD PA", command=lambda: handleClick(dropdownMenu,listboxMenu, "pause"))
+deactivateButton = Button(window, text="無効にする AD PA", command=lambda: handleClick(listboxMenu, "pause"))
 # End Button
-endButton = Button(window, text="削除する AD EA", command=lambda: handleClick(dropdownMenu,listboxMenu, "delete"))
+endButton = Button(window, text="削除する AD EA", command=lambda: handleClick(listboxMenu, "delete"))
 
 
 # Simulation buttons should be removed later on
-stopAllAdsButton = Button(window, text="すべて削除する AD SAA", command=lambda: aiHandler("Stop All Ads", currentAds))
-targetMetButton = Button(window, text="目標を達成 STM", command=lambda: aiHandler("Target Reached", currentAds))
-newDayButton = Button(window, text="新しい日 SND", command=lambda: aiHandler("New Day", currentAds))
+stopAllAdsButton = Button(window, text="すべて削除する AD SAA", command=lambda: aiHandler("Stop All Ads", 5, 10, currentAds))
+targetMetButton = Button(window, text="目標を達成 STM", command=lambda: aiHandler("Target Reached", 15, 60, currentAds))
+newDayButton = Button(window, text="新しい日 SND", command=lambda: aiHandler("New Day",0, 0, currentAds))
 
 # Menu Button
 # Quit button
 quitButton = Button(window, text="終了する", command=quit)
 
+# Message text widget
+textBox = Text(window, height = 2, width = 30)
+textBox.insert(INSERT, "Welcome")
+
+
 # Set main label position on grid
 mainLabel.grid(sticky=W, column=0, row=0, columnspan=4)
 quitButton.grid(column=3, row=0)
 
-activeAdsLabel.grid(sticky=W, column=0, row=1)
-dropdownMenu.grid(sticky=W, column=1, row=1, columnspan=3)
+manualButtonLabel.grid(sticky=W, column=0, row=1, columnspan=3)
+activateButton.grid(sticky=W + E, column=0, row=2)
+deactivateButton.grid(sticky=W + E, column=1, row=2)
+endButton.grid(sticky=W + E, column=2, row=2)
 
-manualButtonLabel.grid(sticky=W, column=0, row=2, columnspan=3)
-activateButton.grid(sticky=W + E, column=0, row=3)
-deactivateButton.grid(sticky=W + E, column=1, row=3)
-endButton.grid(sticky=W + E, column=2, row=3)
+simulationLabel.grid(sticky=W, column=0, row=3, columnspan=4)
+targetMetButton.grid(sticky=W, column=0, row=4)
+newDayButton.grid(sticky=W + E, column=1, row=4)
+stopAllAdsButton.grid(sticky=W + E, column=2, row=4)
 
-simulationLabel.grid(sticky=W, column=0, row=4, columnspan=4)
-targetMetButton.grid(sticky=W, column=0, row=5)
-newDayButton.grid(sticky=W + E, column=1, row=5)
-stopAllAdsButton.grid(sticky=W + E, column=2, row=5)
-
-listboxMenu.grid(sticky=W + E, column=0, row=6)
+activeAdsLabel.grid(sticky=W, column=0, row=5)
+listboxMenu.grid(sticky=W + E, column=0, row=6, columnspan=5)
+messageLabel.grid(sticky=W + E, column=0, row=7, columnspan=5)
+textBox.grid(sticky=W + E, column=0, row=8, columnspan=5)
 
 window.mainloop()
