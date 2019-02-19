@@ -51,39 +51,35 @@ def CreateYahooAdList(readFromFile, myjson, yahooAdList, currentAds):
 '''
 This method will get values from a Json file 
 In the future it will pull it off the Yahoo API
-@:param textFeildValues = adTitles[] from SimpleUIControler
-@:param comboValues = ddMenuValues[] from SimpleUIControler
-@:param ads = currentAds from SimpleUIControler
+@:param adValues = adTitles[] from SimpleUIControler
+@:param currentAds = currentAds from SimpleUIControler
 '''
 
 
-def UpdateUIValues(dropdownValues, currentAds):
+def UpdateUIValues(adValues, currentAds):
     # clear array that holds list of values for the dropdown box
-    dropdownValues.clear()
+    adValues.clear()
     for ad in currentAds:
         apiHost = ad[0]  # Where the ad is hosted
         title = ad[1].title  # The title from the ad
         status = ad[1].status  # The curent status of the ad
-        dropdownValues.append(apiHost + ":" + title + ':' + status)  # Create the list string for the drop down menu
+        adValues.append(apiHost + ":" + title + ':' + status)  # Create the list string for the drop down menu
 
 
 '''
 This method is to update the UI for the dropdownWidget
-@:param dropdownWidget - is the dropdown menu that displays the currently available ads
-@:param dropdownValues - is the list of available ads from every vendor
+@:param listboxWidget - is the listbox menu that displays the currently available ads
+@:param adValues - is the list of available ads from every vendor
 '''
 
 
-def UpdateUI(dropdownWidget, listboxWidget,  dropdownValues):
-    getItemsPerLine(dropdownValues, listboxWidget)
-    dropdownWidget['values'] = dropdownValues
-    # The init value
-    dropdownWidget.current(0)
+def UpdateUI(listboxWidget, adValues):
+    getItemsPerLine(adValues, listboxWidget)
 
-def getItemsPerLine(dropdownValues, listboxWidget):
+def getItemsPerLine(adValues, listboxWidget):
     # Clear the list
     listboxWidget.delete(0,'end')
     x = 1
-    for item in dropdownValues:
+    for item in adValues:
         listboxWidget.insert(x, item)
         x += 1
