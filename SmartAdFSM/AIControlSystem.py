@@ -81,6 +81,7 @@ def deleteAd(ad):
     }
     r = requests.post(yahooPostURL, json=body)
     print(r.status_code)
+    return r.status_code
 
 
 '''
@@ -97,6 +98,7 @@ def activateAd(ad):
     }
     r = requests.post(yahooPostURL, json=body)
     print(r.status_code)
+    return r.status_code
 
 
 '''
@@ -113,28 +115,65 @@ def pauseAd(ad):
     }
     r = requests.post(yahooPostURL, json=body)
     print(r.status_code)
+    return r.status_code
 
 
 '''
 This method is the AI controller when there is a event that occurred
+Potential Events
+Connot make profit from conversion
+Item sold out
+Seasonal Items / Season change
 @:param: event - this is the event that happened
 @:param: currentAds - this is a dictionary of every available ads that are hosted on Yahoo  
 '''
 
 
-def aiControler(event, currentAds):
+def aiControler(event, numberConversions, numberLeads, currentAds):
+
+    messaage = ""
+    # Check to see if max conversion is met
+    maxLeads = 59 # Total number of conversion b
+    if numberLeads >= maxLeads and numberConversions == 0:
+        # Pause all the ads and stop them from running
+        print("Max Leads met")
+        for ads in currentAds:
+            ad = ads[1]
+            controlFSM(ad, "pause")
+            messaage = "Max Leads have been met and Ads have been paused"
+
     if event == "New Day":
         for ads in currentAds:
             ad = ads[1]
             controlFSM(ad, "activate")
+            messaage = "Ads have been activated"
     elif event == "Target Reached":
         for ads in currentAds:
             ad = ads[1]
             controlFSM(ad, "pause")
+            messaage = "Target Convergence reached pausing ads"
     elif event == "Stop All Ads":
         for ads in currentAds:
             ad = ads[1]
             controlFSM(ad, "delete")
+            messaage = "Stop all ads triggered Deleting all ads"
+    elif event == "item sold out":
+        for ads in currentAds:
+            ad = ads[1]
+            controlFSM(ad, "pause")
+            messaage = "Item has been sold out, Pausing Ads"
+    elif event == "item back in stock":
+        for ads in currentAds:
+            ad = ads[1]
+            controlFSM(ad, 'activate')
+            messaage = "Item back in stock, Activating ads"
+    elif event == "out of season":
+        for ads in currentAds:
+            ad = ads[1]
+            controlFSM(ad, "delete")
+            messaage = "Season ended, deleting ads"
+
+    return messaage
 
 
 '''
@@ -145,12 +184,13 @@ def aiControler(event, currentAds):
 '''
 def controlFSM(ad, trigger):
     resultString = ""
+    statusCode = ""
 
     if trigger == "delete":
         if ad.status == "DELETED":
             resultString = "Ad:{}-ID:{} has already ended and will be removed soon".format(ad.title, ad.id)
         else:
-            deleteAd(ad)
+            statusCode = deleteAd(ad)
             resultString = "Ad:{}-ID:{} is being deleted".format(ad.title, ad.id)
 
     elif trigger == "activate":
@@ -158,7 +198,7 @@ def controlFSM(ad, trigger):
             resultString = "Ad:{}-ID:{} is already Active".format(ad.title, ad.id)
         else:
             if ad.status != "ON_HOLD" and ad.status != "DELETED" and ad.status != "REJECTED":
-                activateAd(ad)
+                statusCode = activateAd(ad)
                 resultString = "Ad:{}-ID:{} is being activated".format(ad.title, ad.id)
             else:
                 resultString = "Ad:{}-ID:{} is currently {}, and cannot be activated".format(ad.title, ad.id, ad.status)
@@ -168,12 +208,12 @@ def controlFSM(ad, trigger):
             resultString = "Ad:{}-ID:{} is already paused".format(ad.title, ad.id)
         else:
             if ad.status != "ON_HOLD" and ad.status != "DELETED" and ad.status != "REJECTED":
-                pauseAd(ad)
+                statusCode = pauseAd(ad)
                 resultString = "Ad:{}-ID:{} is being paused".format(ad.title, ad.id)
             else:
                 resultString = "Ad:{}-ID:{} is currently {}, cannot be paused".format(ad.title, ad.id, ad.status)
 
-    return resultString
+    return resultString,  statusCode
 
 
 '''
