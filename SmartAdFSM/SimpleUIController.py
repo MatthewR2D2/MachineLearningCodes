@@ -108,6 +108,7 @@ This passes the events and ads to the AI controller
 
 def aiHandler(event, numberConversions, numberLeads,  allAds):
     message = aic.aiControler(event, numberConversions, numberLeads, allAds)
+    message = "AI Update: " + message
     # Clear textbox
     textBox.delete(1.0, END)
     # Add new message
