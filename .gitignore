@@ -18,3 +18,5 @@ PythonCode/PytorchExamples/AI/data/faces.zip
 \.idea/encodings\.xml
 
 \.idea/
+
+*.pyc
