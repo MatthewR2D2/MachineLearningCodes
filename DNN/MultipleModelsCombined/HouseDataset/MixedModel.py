@@ -54,12 +54,12 @@ testY = testAttrX["price"] / maxPrice
 # process the house attributes data by performing min-max scaling
 # on continuous features, one-hot encoding on categorical features,
 # and then finally concatenating them together
-(trainAttrX, testAttrX) = DatasetsHelper.process_house_attributes(df,
+(trainAttrX, testAttrX) = DatasetsHelper.processHouseAttributes(df,
                                                                   trainAttrX, testAttrX)
 
 # create the MLP and CNN models
-mlp = models.create_mlp(trainAttrX.shape[1], regress=False)
-cnn = models.create_cnn(64, 64, 3, regress=False)
+mlp = models.createMLP(trainAttrX.shape[1], regress=False)
+cnn = models.createCNN(64, 64, 3, regress=False)
 
 # create the input to our final set of layers as the *output* of both
 # the MLP and CNN
