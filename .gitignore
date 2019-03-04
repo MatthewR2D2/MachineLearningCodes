@@ -20,3 +20,19 @@ PythonCode/PytorchExamples/AI/data/faces.zip
 \.idea/
 
 *.pyc
+
+DNN/SelfDrivingCar/TestCode/TestFiles/TrainingData/roadsingvideo\.mp4
+
+DNN/SelfDrivingCar/TestCode/TestFiles/TrainingData/test\.p
+
+DNN/SelfDrivingCar/TestCode/TestFiles/TrainingData/train\.p
+
+DNN/SelfDrivingCar/TestCode/TestFiles/TrainingData/valid\.p
+
+DNN/SelfDrivingCar/TrafficSignClassification/LeNETExample/TrainingData/roadsingvideo\.mp4
+
+DNN/SelfDrivingCar/TrafficSignClassification/LeNETExample/TrainingData/test\.p
+
+DNN/SelfDrivingCar/TrafficSignClassification/LeNETExample/TrainingData/train\.p
+
+DNN/SelfDrivingCar/TrafficSignClassification/LeNETExample/TrainingData/valid\.p
