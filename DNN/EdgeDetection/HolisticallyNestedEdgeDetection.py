@@ -50,4 +50,5 @@ hed = (255 * hed).astype("uint8") # Scale pixels back to range of [0, 255] Make 
 cv2.imshow("Original", image)
 cv2.imshow("HED", hed)
 cv2.waitKey(0)
+cv2.destroyAllWindows()
 
