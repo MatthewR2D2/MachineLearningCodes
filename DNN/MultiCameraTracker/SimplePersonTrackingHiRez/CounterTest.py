@@ -56,7 +56,7 @@ for i in range(0, num_frames):
         forgroundMask = backgroundSub.apply(frame)
 
         #Get contor for each person
-        _, contours, _ = cv2.findContours(forgroundMask.copy(),cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
+        contours, _ = cv2.findContours(forgroundMask.copy(),cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
         contours = filter(lambda cont: cv2.contourArea(cont) > 20, contours)
         #Get bbox from the controus
         for c in contours:

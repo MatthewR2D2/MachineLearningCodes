@@ -118,7 +118,7 @@ for i in range(0, num_frames):
             continue
 
         threshold = getThreshold(first_frame, gray)
-        _, contours, hierarchy = getContours(threshold)
+        contours, hierarchy = getContours(threshold)
 
         # Filter out the blobs that are too small to be considered cars.
         contours = filter(lambda cont: cv2.contourArea(cont) > 30, contours)
