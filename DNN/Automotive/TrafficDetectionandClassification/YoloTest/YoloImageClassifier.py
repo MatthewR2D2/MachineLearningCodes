@@ -47,7 +47,7 @@ net = cv2.dnn.readNetFromDarknet(yoloConfig, yoloWeights)
 
 # Get a test image.
 
-img = imageFolder + "T1" + ext
+img = imageFolder + "T4" + ext
 
 # Read in the image using OpenCV
 image = cv2.imread(img)
