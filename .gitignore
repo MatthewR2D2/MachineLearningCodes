@@ -40,3 +40,5 @@ DNN/SelfDrivingCar/TrafficSignClassification/LeNETExample/TrainingData/valid\.p
 DNN/Automotive/TrafficDetectionandClassification/YoloTest/Yolo-CoCoModel/yolov3\.weights
 
 DNN/ColorPhoto/Models/colorization_release_v2\.caffemodel
+
+NeoPythonExample/neo-python
