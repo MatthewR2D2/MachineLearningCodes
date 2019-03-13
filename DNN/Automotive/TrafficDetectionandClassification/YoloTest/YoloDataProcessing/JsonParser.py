@@ -31,7 +31,7 @@ class DetectionObect():
 def parseData(jsonFile, listOfAllAnnotation):
     with open(jsonFile, "r") as file:
         data = json.load(file)
-
+        _, filename = jsonFile.split("/")
         # Check to see if the review has passed
         if data['review_status'] == "pass":
             # Check to see if there is data
@@ -42,7 +42,7 @@ def parseData(jsonFile, listOfAllAnnotation):
                     # print(item['bounding_box_data'])
                     for bbox in item['bounding_box_data']:
                         boxValue = list(bbox.values())
-                        listOfAllAnnotation.append((item['label'], boxValue))
+                        listOfAllAnnotation.append((filename, item['label'], boxValue))
 
 def singleImageParseData(jsonFile):
     annotatedObjects = []
@@ -63,14 +63,14 @@ def singleImageParseData(jsonFile):
 
         return annotatedObjects
 
-# This will get a list of all unique values for every image to get all labels
-def getUniqueLabels(uniqueLables, allLabels):
-    for lables in allLabels:
-        for addedLables in uniqueLables:
-            if addedLables != lables:
-                uniqueLables.append(lables)
-            else:
-                break
+# This get every label that is used in the data set
+def getAllLables(annotatdedList):
+    allLableList = []
+    for items in annotatdedList:
+        # Label is at 0 or first one
+        allLableList.append(items[0])
+    return allLableList
+
 
 # This loops over every file and parses out the json information that I need
 def loopOverAllFile(annotation, listOfAllAnnotation):
@@ -85,6 +85,7 @@ if __name__ == "__main__":
 
     annotatedDataPath = "AnnotatedData/"
     imageData = "ImageData/"
+    output = "YoloTrainingFiles/"
 
     imageFile = "Test.png"
     jsonFile = "test.json"
@@ -110,9 +111,107 @@ if __name__ == "__main__":
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
+    # Get every file and parse them into label and bbox for changing into yolo text file
     myObject = []
     loopOverAllFile(annotatedDataPath, myObject)
-    print("Test")
-    print(myObject[0])
+
+    # This section prepares all Yolo configuration files
+
+    # Get the labels that are present
+    allLables = getAllLables(myObject)
+    # now find only the unique labels for training files
+    uniqueLabel = list(set(allLables))
+    print("Unique Lables", uniqueLabel)
+
+    # Now create the object name file that use used for each category
+    nameFile = "traffic-obj.names"
+    writeNameFilePath = output+nameFile
+    # Open a file
+    if os.path.isfile(writeNameFilePath) == False:
+        file = open(writeNameFilePath, "w+")
+        # Write labels to file
+        for label in uniqueLabel:
+            file.write(label + "\n")
+        # Close the writer
+        file.close()
+    else:
+        print("Names file exists")
+
+
+    # Create the yolov3.data file
+    yolov3File = "traffic-obj-yolov3.data"
+    yoloPath = output + yolov3File
+    # Get the number of classes
+    numClasses = len(uniqueLabel)
+    trainFile = "traffic-train.txt"
+    valid = "traffic-test.txt"
+    # names will come from above file
+    backup = "backup/"  # For darknet backpu where wieght will be
+
+    dataString = "classes = {} \ntrain = {} \nvalid = {} \nnames = {} \nbackup = {}".format(numClasses, trainFile, valid, nameFile, backup)
+
+    if os.path.isfile(yoloPath) == False:
+        yoloFile = open(yoloPath, "w+")
+        yoloFile.write(dataString)
+        yoloFile.close()
+    else:
+        print("Yolo Data file exists")
+
+
+    '''
+    Van             0
+    Bus             1
+    Pedestrian      2
+    Car             3
+    Bicycle         4
+    Motorcycle      5
+    Truck           6
+    
+    Calculation
+    <class_number>  0-6
+    x = (<absolute_x> / <image_width>)  This is center point
+    y = (<absolute_y> / <image_height>) This is the center point
+    w = (<absolute_width> / <image_width>)
+    h = (<absolute_height> / <image_height>)
+    '''
+    rawImageHeight = 1080
+    rawImageWidth = 1440
+
+    def findCenter(x, y, w, h):
+        x2 = x + w
+        y2 = y + h
+        '''
+        center = (x1 + x2)/2)(y1 + y2/2)
+        '''
+        xCenter = (x + x2)/2
+        yCenter = (y + y2)/2
+        return  xCenter, yCenter
+
+    for object in myObject:
+        print(object)
+        # get the x y w h values
+        x = object[2][0]
+        y = object[2][1]
+        w = object[2][2]
+        h = object[2][3]
+
+        xCenter, yCenter = findCenter(x, y, w, h)
+        newX = xCenter / rawImageWidth
+        newY = yCenter / rawImageHeight
+        abW = w / rawImageWidth
+        abH = h / rawImageHeight
+
+        print("AB X:{}  ABY:{}  ABW:{}  ABH:{}".format(newX, newY, abW, abH))
+
+
+
+
+
+
+
+
+
+
+
 
 
