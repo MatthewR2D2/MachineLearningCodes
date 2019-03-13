@@ -1,0 +1,1 @@
+{"review_status":"pass","annotated_data":[{"data":[],"label":"Van","bounding_box_data":[{"x":953,"y":264,"width":32,"height":46}]},{"data":[],"label":"Truck","bounding_box_data":[{"x":536,"y":249,"width":68,"height":95},{"x":604,"y":220,"width":54,"height":71}]}],"annotation_status":"done"}
