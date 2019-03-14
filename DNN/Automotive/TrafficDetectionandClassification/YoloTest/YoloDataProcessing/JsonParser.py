@@ -176,6 +176,7 @@ if __name__ == "__main__":
     '''
     rawImageHeight = 1080
     rawImageWidth = 1440
+    yoloFormatArray = []
 
     def findCenter(x, y, w, h):
         x2 = x + w
@@ -187,8 +188,21 @@ if __name__ == "__main__":
         yCenter = (y + y2)/2
         return  xCenter, yCenter
 
+    def calculateLabel(x):
+        return {
+            'Van': 0,
+            'Bus': 1,
+            'Pedestrian': 2,
+            'Car': 3,
+            'Bicycle': 4,
+            'Motorcycle': 5,
+            'Truck': 6
+        }.get(x, 2)  # 9 is default if x not found
+
+
+
     for object in myObject:
-        print(object)
+        #print(object)
         # get the x y w h values
         x = object[2][0]
         y = object[2][1]
@@ -200,8 +214,36 @@ if __name__ == "__main__":
         newY = yCenter / rawImageHeight
         abW = w / rawImageWidth
         abH = h / rawImageHeight
+        labelNumber = calculateLabel(object[1])
 
-        print("AB X:{}  ABY:{}  ABW:{}  ABH:{}".format(newX, newY, abW, abH))
+        # Yolo Format needed <object-class> <x> <y> <width> <height>
+        yoloString = "{} {} {} {} {}".format(labelNumber, newX, newY, abW, abH)
+        #print("YoloString:{}".format(yoloString))
+        # Get the file name to match with
+        annotatedFileName = object[0].split(".p")[0]
+        annotatedFileName = annotatedFileName+".txt"
+        # Put the item into the formated yolo array
+        yoloFormatArray.append((annotatedFileName, yoloString))
+
+    textOutputFolder = "YoloTrainingFiles/ImageText/"
+    # Now create a text file for training for each individual image
+    for yoloObject in yoloFormatArray:
+
+        trainPath = textOutputFolder+yoloObject[0]
+        if os.path.isfile(trainPath) == False:
+            writeDataPath = open(trainPath, "w+")
+            writeDataPath.write(yoloObject[1])
+            writeDataPath.close()
+        else:
+            # Append the other bbox to the file
+            with open(trainPath, 'a') as file:
+                file.write("\n"+yoloObject[1])
+
+
+
+
+
+
 
 
 
