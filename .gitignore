@@ -42,3 +42,5 @@ DNN/Automotive/TrafficDetectionandClassification/YoloTest/Yolo-CoCoModel/yolov3\
 DNN/ColorPhoto/Models/colorization_release_v2\.caffemodel
 
 NeoPythonExample/neo-python
+
+DNN/Automotive/TrafficDetectionandClassification/YoloTest/YoloDataProcessing/YoloTrainingFiles/FullDataset/
