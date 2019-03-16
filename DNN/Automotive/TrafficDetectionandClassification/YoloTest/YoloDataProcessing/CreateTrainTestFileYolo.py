@@ -20,27 +20,27 @@ import glob, os
 
 # Current directory
 # '<Your Dataset Path>'
-current_dir = "YoloTrainingFiles/FullDataset/"
+currentDir = "YoloTrainingFiles/FullDataset/"
 
 # Directory where the data will reside, relative to 'darknet.exe'
-path_data = "YoloTrainingFiles/FullDataset/"
+pathData = "YoloTrainingFiles/FullDataset/"
 
 # Percentage of images to be used for the test set
-percentage_test = 10;
+percentageTest = 10;
 
 # Create and/or truncate train.txt and test.txt
-file_train = open('train.txt', 'w')
-file_test = open('test.txt', 'w')
+fileTrain = open('train.txt', 'w')
+fileTest = open('test.txt', 'w')
 
 # Populate train.txt and test.txt
 counter = 1
-index_test = round(100 / percentage_test)
-for pathAndFilename in glob.iglob(os.path.join(current_dir, "*.png")):
+indexTest = round(100 / percentageTest)
+for pathAndFilename in glob.iglob(os.path.join(currentDir, "*.png")):
     title, ext = os.path.splitext(os.path.basename(pathAndFilename))
 
-    if counter == index_test:
+    if counter == indexTest:
         counter = 1
-        file_test.write(path_data + title + '.png' + "\n")
+        fileTest.write(pathData + title + '.png' + "\n")
     else:
-        file_train.write(path_data + title + '.png' + "\n")
+        fileTrain.write(pathData + title + '.png' + "\n")
         counter = counter + 1

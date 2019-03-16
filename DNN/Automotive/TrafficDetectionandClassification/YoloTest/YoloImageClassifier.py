@@ -21,8 +21,8 @@ import time
 import cv2
 
 # Global variables
-threshold = 0.3
-confid = 0.5
+nmsThreshold = 0.3  #Non-maximum suppression threshold
+confThreshold = 0.5 #Confidence threshold
 
 # Paths to folders
 imageFolder = "TestImages/"
@@ -88,7 +88,7 @@ for output in layerOutputs:
         confidence = scores[classID]
 
         # Get rid of lower predictions by losing lower probabilities
-        if confidence > threshold:
+        if confidence > nmsThreshold:
             # scale the bounding box coordinates back relative to the
             # size of the image, keeping in mind that YOLO actually
             # returns the center (x, y)-coordinates of the bounding
@@ -108,7 +108,7 @@ for output in layerOutputs:
 
 # apply non-maxima suppression to suppress weak, overlapping bounding
 # boxes
-idxs = cv2.dnn.NMSBoxes(boxes, confidences, confid, threshold)
+idxs = cv2.dnn.NMSBoxes(boxes, confidences, confThreshold, nmsThreshold)
 
 # ensure at least one detection exists
 if len(idxs) > 0:

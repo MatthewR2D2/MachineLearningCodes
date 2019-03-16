@@ -1,0 +1,5 @@
+classes = 7 
+train = data/traffic/train.txt 
+valid = data/traffic/test.txt 
+names = traffic-obj.names 
+backup = backup/
